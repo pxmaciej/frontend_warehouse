@@ -1,16 +1,16 @@
-FROM node:lts-alpine
+# base image
+FROM node:12.2.0-alpine
 
-# make the 'app' folder the current working directory
+# set working directory
 WORKDIR /app
 
-# copy both 'package.json' and 'package-lock.json' (if available)
-COPY package*.json ./
+# add `/app/node_modules/.bin` to $PATH
+ENV PATH /app/node_modules/.bin:$PATH
 
-# install project dependencies
+# install and cache app dependencies
+COPY package.json /app/package.json
 RUN npm install
+RUN npm install @vue/cli@4.5.15 -g
 
-# copy project files and folders to the current working directory (i.e. 'app' folder)
-COPY . .
-
-# build app for production with minification
+# start app
 CMD ["npm", "run", "serve"]

@@ -22,3 +22,6 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### Runn docker 
+docker run -v ${PWD}:/app -v /app/node_modules -p 8081:8080 --rm front:prod

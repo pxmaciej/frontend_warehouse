@@ -1,6 +1,6 @@
 
 import HelloWorld from './components/HelloWorld'
-import Home from './components/Home'
+import Login from './components/Login'
 
 export const routes = [
 
@@ -9,7 +9,7 @@ export const routes = [
         component: HelloWorld,
     },
     {
-        path : '/home',
-        component: Home,
+        path : '/login',
+        component: Login,
     }
 ];

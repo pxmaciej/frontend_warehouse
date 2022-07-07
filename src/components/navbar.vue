@@ -3,17 +3,21 @@
       dark
       app>
       <div class="d-flex align-center">
-        <v-avatar class="d-block text-center mx-auto mt-3" size="50">
-            <i class="fa fa-industry navavatar" aria-hidden="true"></i>
-        </v-avatar>
-   
+       <v-btn
+       href="/"
+       text
+       >
+            <v-avatar class="d-block text-center mx-auto mt-3" size="50">
+                <i class="fa fa-industry navavatar" aria-hidden="true"></i>
+            </v-avatar>
+            <span class="ml-2">Warehouse</span> 
+       </v-btn>
       </div>
 
       <v-spacer></v-spacer>
 
       <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
+        href="/login"
         text
       >
         <span class="mr-2">Login</span>
@@ -26,7 +30,7 @@
 
 
 export default {
-  name: 'navbar',
+  name: 'Navbar',
 
   data: () => ({
   

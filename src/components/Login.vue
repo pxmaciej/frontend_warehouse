@@ -1,18 +1,22 @@
 <template>
  <v-card
   elevation="7"
-  class="mx-auto mt-4"
+  class="mx-auto mt-5"
   dark
   max-width="800px"
 >
 <v-row>
-    <v-col style="padding:0px;">
+    <v-col 
+    style="padding:0px;"
+    cols="6">
           <v-img
       height="250"
-      src="https://cdn.vuetifyjs.com/images/cards/cooking.png"
+      src="../assets/dog.jpg"
     ></v-img>
     </v-col>
-    <v-col style="padding: 15px;">
+    <v-col 
+    cols="6"
+    >
         <form @submit.prevent="submit">
         <v-text-field
           v-model="login"
@@ -22,10 +26,13 @@
         ></v-text-field>
 
         <v-text-field
-          v-model="email"
-          :error-messages="errors"
-          label="E-mail"
+          v-model="password"
+        :type="show ? 'text' : 'password'"
+          label="Password"
+          hint="At least 8 characters"
           required
+          @click:append="show = !show"
+          :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
         ></v-text-field>
 
 
@@ -51,34 +58,24 @@
 
   export default {
     components: {
-      ValidationProvider,
+   
 
     },
     data: () => ({
-      Login: '',
-      phoneNumber: '',
-      email: '',
+      login: '',
+      password:'',
       select: null,
-      items: [
-        'Item 1',
-        'Item 2',
-        'Item 3',
-        'Item 4',
-      ],
-      checkbox: null,
+      show: false,
+     
     }),
 
     methods: {
       submit () {
-        this.$refs.observer.validate()
+
       },
       clear () {
-        this.Login = ''
-        this.phoneNumber = ''
-        this.email = ''
-        this.select = null
-        this.checkbox = null
-        this.$refs.observer.reset()
+        this.login = ''
+        this.password = ''
       },
     },
 }

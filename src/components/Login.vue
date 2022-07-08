@@ -64,7 +64,6 @@
     data: () => ({
       login: '',
       password:'',
-      select: null,
       show: false,
      
     }),

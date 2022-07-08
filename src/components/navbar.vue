@@ -10,7 +10,7 @@
             <v-avatar class="d-block text-center mx-auto mt-3" size="50">
                 <i class="fa fa-industry navavatar" aria-hidden="true"></i>
             </v-avatar>
-            <span class="ml-2">Warehouse</span> 
+            <span class="ml-2"><h1>Warehouse</h1></span> 
        </v-btn>
       </div>
 

@@ -4,6 +4,7 @@ import VueRouter from 'vue-router'
 import {routes} from './routes'
 import vuetify from './plugins/vuetify'
 import VeeValidate from 'vee-validate';
+import {store} from './store'
 
 Vue.use(VeeValidate);
 Vue.config.productionTip = false
@@ -17,6 +18,7 @@ const router = new VueRouter({
 new Vue({
   router: router,
   vuetify,
+  store,
   render: h => h(App)
 }).$mount('#app')
 

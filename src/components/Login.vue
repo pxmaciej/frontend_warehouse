@@ -19,14 +19,14 @@
     >
         <form @submit.prevent="submit">
         <v-text-field
-          v-model="login"
+          v-model="user.email"
           :counter="10"
-          label="Login"
+          label="Email"
           required
         ></v-text-field>
 
         <v-text-field
-          v-model="password"
+          v-model="user.password"
         :type="show ? 'text' : 'password'"
           label="Password"
           hint="At least 8 characters"
@@ -54,7 +54,7 @@
 </template>
 
 <script>
-
+import AuthService from "../services/auth.service.js"
 
   export default {
     components: {
@@ -62,18 +62,23 @@
 
     },
     data: () => ({
-      login: '',
-      password:'',
+      user:{
+        email: '',
+        password:''
+      },
       show: false,
      
     }),
 
     methods: {
       submit () {
+        if(this.user.email&&this.user.password){
+          AuthService.login(this.user);
+        }
 
       },
       clear () {
-        this.login = ''
+        this.email = ''
         this.password = ''
       },
     },

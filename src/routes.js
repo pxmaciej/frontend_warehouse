@@ -1,6 +1,7 @@
-
+import Dashboard from './components/Dashboard'
 import HelloWorld from './components/HelloWorld'
 import Login from './components/Login'
+
 
 export const routes = [
 
@@ -11,5 +12,9 @@ export const routes = [
     {
         path : '/login',
         component: Login,
+    },
+    {
+        path : '/dashboard',
+        component: Dashboard,
     }
 ];

@@ -1,21 +1,21 @@
 import axios from 'axios';
-const API_URL = 'http://localhost:8080/api/auth/';
+const API_URL = 'http://127.0.0.1:8000/api/auth/';
 class AuthService {
   login(user) {
     return axios
       .post(API_URL + 'login', {
-        username: user.username,
+        email: user.email,
         password: user.password
       })
       .then(response => {
-        if (response.data.accessToken) {
-          localStorage.setItem('setToken', JSON.stringify(response.data));
+        if (response.data.access_token) {
+          localStorage.setItem('setToken', JSON.stringify(response.data.access_token));
         }
-        return response.data;
+       
       });
   }
   logout() {
-    this.$store.commit('clearToken');
+    this.store.commit('clearToken');
   }
   register(user) {
     return axios.post(API_URL + 'register', {

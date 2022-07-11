@@ -27,12 +27,12 @@
 
         <v-text-field
           v-model="user.password"
-        :type="show ? 'text' : 'password'"
+          :type="show ? 'text' : 'password'"
           label="Password"
           hint="At least 8 characters"
           required
           @click:append="show = !show"
-          :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+          :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
         ></v-text-field>
 
 
@@ -73,7 +73,9 @@ import AuthService from "../services/auth.service.js"
     methods: {
       submit () {
         if(this.user.email&&this.user.password){
-          AuthService.login(this.user);
+          AuthService.login(this.user)
+              this.$router.push('/dashboard')
+          
         }
 
       },

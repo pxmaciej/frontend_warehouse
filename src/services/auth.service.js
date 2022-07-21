@@ -1,5 +1,6 @@
-import axios from 'axios';
-const API_URL = 'http://127.0.0.1:8000/api/auth/';
+import axios from 'axios'
+import {store} from '../store'
+const API_URL = 'http://127.0.0.1:8000/api/auth/'
 class AuthService {
   login(user) {
     return axios
@@ -9,13 +10,13 @@ class AuthService {
       })
       .then(response => {
         if (response.data.access_token) {
-          localStorage.setItem('setToken', JSON.stringify(response.data.access_token));
+          store.commit('setToken', response.data.access_token);
         }
        
       });
   }
   logout() {
-    this.store.commit('clearToken');
+    store.commit('clearToken');
   }
   register(user) {
     return axios.post(API_URL + 'register', {
@@ -23,6 +24,12 @@ class AuthService {
       email: user.email,
       password: user.password
     });
+  }
+  check(token){
+   return axios
+      .post(API_URL + 'checkToken', {
+         token : token
+      })
   }
 }
 export default new AuthService();

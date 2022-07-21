@@ -24,21 +24,10 @@
 </template>
 
 <script>
-import axios from 'axios';
-const API_PRODUCT = 'http://127.0.0.1:8000/api/product/index';
+
 export default {
   name: 'ListProduct',
-  data(){
-    return{
-        products:[]
-    }
-  },
-  mounted(){
-    axios.get(API_PRODUCT, { token : this.$store.state.token})
-    .then( res=>{
-        this.products = res.data
-    })
-  }
+  props: ['products'],
 
 }
 </script>

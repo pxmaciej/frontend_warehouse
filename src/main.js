@@ -3,7 +3,7 @@ import App from './App.vue'
 import VueRouter from 'vue-router'
 import {routes} from './routes'
 import vuetify from './plugins/vuetify'
-import VeeValidate from 'vee-validate';
+import VeeValidate from 'vee-validate'
 import {store} from './store'
 
 Vue.use(VeeValidate);
@@ -18,7 +18,7 @@ const router = new VueRouter({
 new Vue({
   router: router,
   vuetify,
-  store,
+  store : store,
   render: h => h(App)
 }).$mount('#app')
 

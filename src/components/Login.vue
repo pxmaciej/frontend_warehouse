@@ -55,12 +55,14 @@
 </template>
 
 <script>
-import AuthService from "../services/auth.service.js"
+import axios from 'axios';
 
+const API_AUTH = 'http://127.0.0.1:8000/api/auth/'
 
-  export default {
+export default
+{
     components: {
-    },
+        },
     data: () => ({
       user:{
         email: '',
@@ -69,33 +71,38 @@ import AuthService from "../services/auth.service.js"
       show: false,
     }),
 
-    mounted(){
-        if(this.$store.state.token != ''){
-         if(AuthService.check(this.$store.state.token)){
-           this.$router.push('/dashboard')
-         }else{
-          this.$store.commit('clearToken');
-         }
-        }
-        
+    mounted()
+    {
+      if(this.$store.state.token !== '')
+      {
+        axios.post(API_AUTH + 'checkToken', { token : this.$store.state.token} )
+            .then( res => {
+              if(res.data.success){
+                this.$router.push('/dashboard');
+              } else {
+                this.$store.commit('clearToken');
+              }
+            })
+      }
     },
     methods: {
       submit () {
-        if(this.user.email&&this.user.password){
-          if(AuthService.login(this.user))
-          this.$router.push('/dashboard')
-        }
-
+        axios.post(API_AUTH + 'login', this.user)
+            .then(res => {
+              this.$store.commit('setToken', res.data.access_token);
+              this.$router.push('/dashboard');
+            })
+            .catch(err => {
+              console.log(err.data);
+            });
       },
       clear () {
         this.email = ''
         this.password = ''
       },
-    },
+    }
 }
-  
 </script>
 <style>
-
 </style>
 

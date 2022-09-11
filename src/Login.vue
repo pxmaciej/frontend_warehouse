@@ -11,7 +11,7 @@
     cols="6">
           <v-img
       height="250"
-      src="../assets/dog.jpg"
+      src="./assets/dog.jpg"
     ></v-img>
     </v-col>
     <v-col 

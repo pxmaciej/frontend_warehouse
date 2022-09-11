@@ -5,10 +5,13 @@ import { routes } from './routes'
 import vuetify from './plugins/vuetify'
 import VeeValidate from 'vee-validate'
 import { store } from './store'
+import SmartTable from 'vuejs-smart-table'
+
 
 Vue.use(VeeValidate);
-Vue.config.productionTip = false
-Vue.use(VueRouter)
+Vue.config.productionTip = false;
+Vue.use(VueRouter);
+Vue.use(SmartTable)
 
 const router = new VueRouter({
   routes: routes,

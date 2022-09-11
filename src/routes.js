@@ -1,6 +1,6 @@
-import Dashboard from './components/Dashboard'
+import Dashboard from './Dashboard'
 import HelloWorld from './components/HelloWorld'
-import Login from './components/Login'
+import Login from './Login'
 
 
 export const routes = [

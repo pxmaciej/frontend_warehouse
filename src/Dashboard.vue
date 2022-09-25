@@ -2,54 +2,90 @@
  <div class="container">
     <div class="row">
         <div class="col-6">
-            <listProduct v-bind:products="products"></listProduct>
+            <crudProduct v-bind:products="products" @submit="restart"></crudProduct>
         </div>
         <div class="col-6">
             <measureProduct v-bind:measureProducts="measureProducts"></measureProduct>
         </div>
     </div>
+   <div class="row">
+     <div class="col-12">
+       <crudOrder v-bind:orders="orders" @submit="restart"></crudOrder>
+     </div>
+   </div>
+   <div class="row">
+     <div class="col-12">
+       <crudAlert :alerts="alerts" :products="products" @submit="restart"></crudAlert>
+     </div>
+   </div>
  </div>
 </template>
 
 <script>
-import listProduct from './components/listProduct.vue'
+import crudProduct from './components/crudProduct.vue'
+import crudOrder from "./components/crudOrder"
+import crudAlert from "./components/crudAlert";
 import measureProduct from './components/measureProduct.vue'
 import axios from 'axios'
 
 const API_PRODUCT = 'http://127.0.0.1:8000/api/product/index'
 const API_AUTH = 'http://127.0.0.1:8000/api/auth/'
-
+const API_ORDER = 'http://127.0.0.1:8000/api/order/index'
+const API_ALERT = 'http://127.0.0.1:8000/api/alert/index'
 
 export default {
     name: 'Dashboard',
     components:{
-        listProduct,
-        measureProduct
+        crudProduct,
+        measureProduct,
+        crudOrder,
+        crudAlert
     },
 
     data () {
         return{
         products: [],
-        measureProducts: []
+        orders: [],
+        alerts: [],
+        measureProducts: [],
+        mergeAlerts: [],
         }
     },
 
   mounted: async function () {
-    if (this.$store.state.token !== '') {
-      axios.post(API_AUTH + 'checkToken', {token: this.$store.state.token})
-          .then(res => {
-            if (res.data.success) {
-              this.$router.push('/dashboard');
-            } else {
-              this.$store.commit('clearToken');
-            }
-          })
+    if(this.$store.state.token !== '')
+    {
+      axios.post(API_AUTH + 'checkToken', { token : this.$store.state.token} )
+           .then( res => {
+             if(res.data.success){
+               console.log('success')
+             }
+           }).catch(err => {
+        this.$store.commit('clearToken');
+        this.$router.push('/login');
+        console.log(err.data);
+      })
     }
+    
     axios.get(API_PRODUCT, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
         .then(res => {
           this.products = res.data
           this.selectMeasure();
         })
+  
+    axios.get(API_ORDER, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+         .then(res => {
+           this.orders = res.data
+         })
+  
+    axios.get(API_ALERT, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+         .then(res => {
+           this.alerts = res.data
+           this.alerts.forEach((alert) => {
+             alert.productName = this.products.find(product => product.id === alert.product_id).name;
+           });
+           console.log(this.alerts)
+         })
   },
   methods: {
       selectMeasure() {
@@ -58,6 +94,27 @@ export default {
             this.measureProducts.push(value);
           }
         });
+      },
+      restart() {
+        axios.get(API_PRODUCT, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+             .then(res => {
+               this.products = res.data
+               this.selectMeasure();
+             })
+        
+        axios.get(API_ORDER, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+             .then(res => {
+               this.orders = res.data
+             })
+  
+  
+        axios.get(API_ALERT, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+             .then(res => {
+               this.alerts = res.data
+               this.alerts.forEach((alert) => {
+                 alert.productName = this.products.find(product => product.id === alert.product_id).name;
+               });
+             })
       }
   }
 }

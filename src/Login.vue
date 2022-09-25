@@ -61,8 +61,6 @@ const API_AUTH = 'http://127.0.0.1:8000/api/auth/'
 
 export default
 {
-    components: {
-        },
     data: () => ({
       user:{
         email: '',
@@ -79,10 +77,12 @@ export default
             .then( res => {
               if(res.data.success){
                 this.$router.push('/dashboard');
-              } else {
-                this.$store.commit('clearToken');
               }
-            })
+            }).catch(err => {
+              this.$store.commit('clearToken');
+              this.$router.push('/login');
+              console.log(err.data);
+        })
       }
     },
     methods: {

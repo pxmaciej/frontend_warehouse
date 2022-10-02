@@ -34,6 +34,16 @@
                 <v-row>
                   <v-col cols="12" sm="12" md="12">
                     <v-text-field v-model="editedItem.name" label="Alert name"></v-text-field>
+                    <v-select
+                        v-model="editedItem.product_id"
+                        :hint="`${products.name}`"
+                        :items="products"
+                        item-text="name"
+                        item-value="id"
+                        label="Select Porduct"
+                        persistent-hint
+                        single-line
+                    ></v-select>
                     <v-text-field v-model="editedItem.product_id" label="Product"></v-text-field>
                   </v-col>
                 </v-row>

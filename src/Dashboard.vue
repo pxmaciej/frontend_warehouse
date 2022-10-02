@@ -1,5 +1,32 @@
 <template>
  <div class="container">
+   <div>
+     <span v-for="alert in alerts" :key="alert.id">
+       <v-alert
+           v-model="boolAlert"
+           color="red"
+           border="left"
+           elevation="2"
+           colored-border
+           icon="mdi-cloud-alert"
+       >
+       {{alert.name}}
+       </v-alert>
+     </span>
+     <div class="text-center">
+       <v-btn
+           color="error"
+           @click="boolAlert = !boolAlert"
+       >
+         Show Allert
+       </v-btn>
+     </div>
+   </div>
+    <div class="row">
+        <div class="col-12">
+            <sparkle-product :products="products"></sparkle-product>
+        </div>
+    </div>
     <div class="row">
         <div class="col-6">
             <crudProduct v-bind:products="products" @submit="restart"></crudProduct>
@@ -26,6 +53,7 @@ import crudProduct from './components/crudProduct.vue'
 import crudOrder from "./components/crudOrder"
 import crudAlert from "./components/crudAlert";
 import measureProduct from './components/measureProduct.vue'
+import sparkleProduct from "./components/sparkleProduct";
 import axios from 'axios'
 
 const API_PRODUCT = 'http://127.0.0.1:8000/api/product/index'
@@ -36,6 +64,7 @@ const API_ALERT = 'http://127.0.0.1:8000/api/alert/index'
 export default {
     name: 'Dashboard',
     components:{
+        sparkleProduct,
         crudProduct,
         measureProduct,
         crudOrder,
@@ -49,6 +78,7 @@ export default {
         alerts: [],
         measureProducts: [],
         mergeAlerts: [],
+        boolAlert: false
         }
     },
 
@@ -84,7 +114,6 @@ export default {
            this.alerts.forEach((alert) => {
              alert.productName = this.products.find(product => product.id === alert.product_id).name;
            });
-           console.log(this.alerts)
          })
   },
   methods: {
@@ -114,6 +143,7 @@ export default {
                this.alerts.forEach((alert) => {
                  alert.productName = this.products.find(product => product.id === alert.product_id).name;
                });
+               this.boolAlert = true
              })
       }
   }

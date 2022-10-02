@@ -1,7 +1,7 @@
 import Dashboard from './Dashboard'
 import HelloWorld from './components/HelloWorld'
 import Login from './Login'
-import Product from "./Product";
+import OrderList from "./OrderList";
 
 
 export const routes = [
@@ -19,7 +19,9 @@ export const routes = [
         component: Dashboard,
     },
     {
-        path : '/product',
-        component: Product,
+        path : '/orderList/:order',
+        name: 'orderList',
+        component: OrderList,
+        props: true
     }
 ];

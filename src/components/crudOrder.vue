@@ -1,9 +1,12 @@
 <template>
   <v-data-table
+      v-model="selected"
       :headers="headers"
       :items="orders"
       sort-by="dateDeliver"
+      show-select
       class="elevation-1"
+      :single-select=true
   >
     <template v-slot:top>
       <v-toolbar flat color="white">
@@ -23,6 +26,13 @@
                 v-bind="attrs"
                 v-on="on"
             >New Item</v-btn>
+            <v-btn
+                color="success"
+                dark
+                class="mb-2 mr-2"
+                @click.prevent="addProductsToOrder(selected)"
+            >Select Order Add Product</v-btn>
+            
           </template>
           <v-card>
             <v-card-title>
@@ -101,6 +111,7 @@ export default {
       { text: 'Deliver Date', value: 'dateDeliver',  dataType: "Date" },
       { text: 'Actions', value: 'actions', sortable: false },
     ],
+    selected: null,
     editedIndex: -1,
     editedItem: {
       nameBuyer: '',
@@ -126,13 +137,17 @@ export default {
     },
   },
   methods: {
-    editItem (item) {
+    addProductsToOrder(selected) {
+      this.$router.push({name: 'orderList', params: { order: selected }})
+    },
+    
+    editItem(item) {
       this.editedIndex = this.orders.indexOf(item)
       this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
     
-    deleteItem (item) {
+    deleteItem(item) {
       const index = this.orders.indexOf(item)
       confirm('Are you sure you want to delete this item?') && this.orders.splice(index, 1)
       axios.delete(API_ORDER+'destroy/'+item.id,{headers: {"Authorization": 'Bearer ' + this.$store.state.token}})

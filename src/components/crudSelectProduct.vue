@@ -1,5 +1,5 @@
 <template>
-  <v-data-table
+	<v-data-table
       v-model="selected"
       :headers="headers"
       :items="products"
@@ -31,15 +31,11 @@
             <v-card-title>
               <span class="headline">Add to order</span>
             </v-card-title>
-            
             <v-card-text>
               <v-container>
                 <v-row>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field v-model="editedItem.amount" label="Amount"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.price" label="Price"></v-text-field>
                   </v-col>
                 </v-row>
               </v-container>
@@ -62,7 +58,8 @@
 
 import axios from "axios";
 
-const API_ORDER_LIST = 'http://127.0.0.1:8000/api/orderlist/';
+const API_ORDER_LIST = 'http://127.0.0.1:8000/api/orderlist/'
+const API_PRODUCT = 'http://127.0.0.1:8000/api/product/'
 
 export default {
   name: 'crudProduct',
@@ -94,6 +91,10 @@ export default {
       amount: 0,
       price: 0,
     },
+		product: {
+			id: 0,
+			amount: 0,
+		},
     selected: [],
   }),
   
@@ -109,16 +110,41 @@ export default {
     },
     
     save () {
+      this.product.id = this.selected['0'].id
+      this.editedItem.order_id = this.order['0'].id
+      this.editedItem.product_id = this.selected['0'].id
+      this.editedItem.price = this.selected['0'].price * this.editedItem.amount
       
-          this.editedItem.order_id = this.order['0'].id
-          this.editedItem.product_id = this.selected['0'].id
-   
-        axios.post(API_ORDER_LIST+'store', this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-             .then(res => {
-               if (res.data === 'success')
-                 this.close()
-               this.$emit('submit')
-             })
+      if (this.selected['0'].amount >= this.editedItem.amount) {
+        axios.post(API_ORDER_LIST + 'store', this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+        .then(res => {
+          console.log(res.data)
+          this.$emit('submit')
+          this.$notify({
+            title: 'Success',
+            text: 'Success Add Product To Order',
+            type: 'success',
+            duration: 5000,
+            speed: 2000,
+          })
+        })
+        
+        this.product.amount = this.selected['0'].amount - this.editedItem.amount
+        axios.post(API_PRODUCT + 'update', this.product, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+        .then(res => {
+          console.log(res);
+        })
+        
+        this.close()
+      } else {
+        this.$notify({
+          title: 'Error',
+          text: 'Amount in order is greater then product amount',
+          type: 'error',
+          duration: 5000,
+          speed: 2000,
+        })
+      }
     }
   }
 }

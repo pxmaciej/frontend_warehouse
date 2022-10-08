@@ -52,11 +52,12 @@
 
 import axios from "axios";
 
-const API_ORDER_LIST = 'http://127.0.0.1:8000/api/orderlist/';
+const API_ORDER_LIST = 'http://127.0.0.1:8000/api/orderlist/'
+const API_PRODUCT = 'http://127.0.0.1:8000/api/product/'
 
 export default {
   name: 'crudOrderList',
-  props: ['orderList', 'order', 'products'],
+  props: ['orderList', 'products'],
   data: () => ({
     dialog: false,
     headers: [
@@ -86,6 +87,10 @@ export default {
       amount: 0,
       price: 0
     },
+    product: {
+      id: 0,
+      amount: 0,
+    }
   }),
   
   computed: {
@@ -100,14 +105,27 @@ export default {
     },
   },
   methods: {
-    deleteItem(item) {
-      
-      axios.delete(API_ORDER_LIST+'destroy/'+item.id,{headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-           .then(res => {
-             console.log(res);
-             this.$emit('submit')
-           })
-    },
+		deleteItem(item) {
+			axios.delete(API_ORDER_LIST+'destroy/'+item.id,{headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+			.then(res => {
+				console.log(res)
+				this.$emit('submit')
+				this.$notify({
+					title: 'Notification',
+					text: 'Success delete Item',
+					type: 'success',
+					duration: 5000,
+					speed: 2000,
+				})
+			})
+      this.product.id = item.product_id
+      this.product.amount = item.amount + this.products.find(product => product.id === this.product.id).amount
+      console.log(this.product.amount)
+      axios.post(API_PRODUCT + 'update', this.product, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+      .then(res => {
+        console.log(res);
+      })
+		},
     
     close () {
       this.dialog = false

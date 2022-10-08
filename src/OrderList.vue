@@ -10,6 +10,7 @@
         <crud-order-list :orderList="orderList" :order="order" :products="products" @submit="restart"></crud-order-list>
       </div>
     </div>
+		<notifications position="bottom right" classes=""/>
   </div>
 </template>
 
@@ -19,7 +20,7 @@ import crudOrderList from "./components/crudOrderList";
 import axios from "axios";
 
 const API_PRODUCT = 'http://127.0.0.1:8000/api/product/'
-const API_ORDER_LIST = 'http://127.0.0.1:8000/api/orderlist/';
+const API_ORDER_LIST = 'http://127.0.0.1:8000/api/orderlist/'
 
 export default {
   name: "OrderList",
@@ -37,7 +38,7 @@ export default {
       orderList: []
     }
   },
-  
+	
   mounted: async function () {
     console.log(this.order)
     
@@ -53,12 +54,15 @@ export default {
   },
   methods: {
     restart(){
-      
-      axios.get(API_ORDER_LIST+'order/'+this.order['0'].id, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-           .then(res => {
-             this.orderList = res.data
-           })
-      
+			axios.get(API_PRODUCT+'index', {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+			.then(res => {
+				this.products = res.data
+			})
+			
+			axios.get(API_ORDER_LIST+'order/'+this.order['0'].id, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+			.then(res => {
+				this.orderList = res.data
+			})
     }
   }
 }

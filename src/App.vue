@@ -3,7 +3,6 @@
     <navbar></navbar>
     <v-main>
       <v-container fluid>
-        <!-- If using vue-router -->
         <router-view></router-view>
       </v-container>
     </v-main>
@@ -19,7 +18,9 @@ export default {
   components: {
    navbar
   },
+  
   data: () => ({
   }),
+	
 };
 </script>

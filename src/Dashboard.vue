@@ -1,27 +1,27 @@
 <template>
  <div class="container">
-   <notifications/>
+   <notifications position="bottom right" reverse="true" />
     <div class="row">
-        <div class="col-12">
+<!--        <div class="col-12">
             <sparkle-product :products="products"></sparkle-product>
-        </div>
+        </div>-->
     </div>
     <div class="row">
         <div class="col-6">
-            <crudProduct v-bind:products="products" @submit="restart"></crudProduct>
+            <crudProduct :products="products" @submit="restart"></crudProduct>
         </div>
         <div class="col-6">
-            <measureProduct v-bind:measureProducts="measureProducts"></measureProduct>
+            <measureProduct :measureProducts="measureProducts"></measureProduct>
         </div>
     </div>
    <div class="row">
      <div class="col-12">
-       <crudOrder v-bind:orders="orders" @submit="restart"></crudOrder>
+       <crudOrder :orders="orders" @submit="restart"></crudOrder>
      </div>
    </div>
    <div class="row">
      <div class="col-12">
-       <crudAlert :alerts="alerts" :products="products" @submit="restart"></crudAlert>
+       <crudAlert :alerts="alerts" :products="products" @submit="restartAlert"></crudAlert>
      </div>
    </div>
  </div>
@@ -32,7 +32,7 @@ import crudProduct from './components/crudProduct.vue'
 import crudOrder from "./components/crudOrder"
 import crudAlert from "./components/crudAlert";
 import measureProduct from './components/measureProduct.vue'
-import sparkleProduct from "./components/sparkleProduct";
+//import sparkleProduct from "./components/sparkleProduct";
 import axios from 'axios'
 
 const API_PRODUCT = 'http://127.0.0.1:8000/api/product/index'
@@ -41,7 +41,7 @@ const API_ORDER = 'http://127.0.0.1:8000/api/order/index'
 const API_ALERT = 'http://127.0.0.1:8000/api/alert/index'
 
 export default {name: 'Dashboard', components:{
-		sparkleProduct,
+		//sparkleProduct,
 		crudProduct,
 		measureProduct,
 		crudOrder,
@@ -88,21 +88,20 @@ export default {name: 'Dashboard', components:{
 		
 		axios.get(API_ALERT, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
 		.then(res => {
-			this.alerts = res.data
-			this.alerts.forEach((alert) => {
-			alert.productName = this.products.find(product => product.id === alert.product_id).name
-				this.$notify({
-					title: 'Important message',
-					text: alert.name,
-					type: 'warn',
-					duration: 5000,
-					speed: 1000,
-					})
-			})
-		})
+            this.alerts = res.data
+            this.alerts.forEach((alert) => {
+                alert.productName = this.products.find(product => product.id === alert.product_id).name
+                this.$notify({
+                   title: 'Important message',
+                   text: alert.name,
+                   type: 'warn',
+                   duration: 5000,
+                   speed: 1000,
+                })
+            })
+        })
 	},
-	methods:
-		{
+	methods: {
 		selectMeasure() {
 			this.products.forEach((value) => {
 				if (value.amount < 100) {
@@ -122,23 +121,24 @@ export default {name: 'Dashboard', components:{
 			.then(res => {
 				this.orders = res.data
 			})
-			
-			axios.get(API_ALERT, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-			.then(res => {
-				this.alerts = res.data
-			
-				this.alerts.forEach((alert) => {
-					alert.productName = this.products.find(product => product.id === alert.product_id).name;
-					this.$notify({
-						title: 'Important message',
-						text: alert.name,
-						type: 'warn',
-						duration: 10000,
-						speed: 2000,
-						})
-				})
-			})
-		}
+		},
+    restartAlert() {
+      axios.get(API_ALERT, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+      .then(res => {
+        this.alerts = res.data
+        
+        this.alerts.forEach((alert) => {
+          alert.productName = this.products.find(product => product.id === alert.product_id).name;
+          this.$notify({
+            title: 'Important message',
+            text: alert.name,
+            type: 'warn',
+            duration: 10000,
+            speed: 2000,
+          })
+        })
+      })
+    }
 	}
 }
 </script>

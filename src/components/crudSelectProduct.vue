@@ -49,9 +49,6 @@
         </v-dialog>
       </v-toolbar>
     </template>
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize">Reset</v-btn>
-    </template>
   </v-data-table>
 </template>
 <script>
@@ -130,7 +127,7 @@ export default {
         })
         
         this.product.amount = this.selected['0'].amount - this.editedItem.amount
-        axios.post(API_PRODUCT + 'update', this.product, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+        axios.patch(API_PRODUCT + 'update/'+this.product.id, this.product, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
         .then(res => {
           console.log(res);
         })

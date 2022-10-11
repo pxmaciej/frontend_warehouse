@@ -74,9 +74,6 @@
         mdi-delete
       </v-icon>
     </template>
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize">Reset</v-btn>
-    </template>
   </v-data-table>
 </template>
 
@@ -156,7 +153,7 @@ export default {
     
     save () {
       if (this.editedIndex > -1) {
-        axios.post(API_ALERT+'update', this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+        axios.patch(API_ALERT+'update/'+ this.editedItem.id, this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
              .then(res => {
                console.log(res);
                this.$emit('submit')

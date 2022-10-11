@@ -14,24 +14,6 @@
             vertical
         ></v-divider>
         <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="800px">
-          <v-card>
-            <v-card-title>
-              <span class="headline">{{ formTitle }}</span>
-            </v-card-title>
-            
-            <v-card-text>
-              <v-container>
-              </v-container>
-            </v-card-text>
-            
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
       </v-toolbar>
     </template>
     <template v-slot:item.actions="{ item }">
@@ -41,9 +23,6 @@
       >
         mdi-delete
       </v-icon>
-    </template>
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize">Reset</v-btn>
     </template>
   </v-data-table>
 </template>
@@ -93,17 +72,6 @@ export default {
     }
   }),
   
-  computed: {
-    formTitle () {
-      return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
-    },
-  },
-  
-  watch: {
-    dialog (val) {
-      val || this.close()
-    },
-  },
   methods: {
 		deleteItem(item) {
 			axios.delete(API_ORDER_LIST+'destroy/'+item.id,{headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
@@ -121,19 +89,11 @@ export default {
       this.product.id = item.product_id
       this.product.amount = item.amount + this.products.find(product => product.id === this.product.id).amount
       console.log(this.product.amount)
-      axios.post(API_PRODUCT + 'update', this.product, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+      axios.patch(API_PRODUCT + 'update/'+this.product.id, this.product, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
       .then(res => {
         console.log(res);
       })
 		},
-    
-    close () {
-      this.dialog = false
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      })
-    },
   }
 }
 </script>

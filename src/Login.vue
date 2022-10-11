@@ -6,8 +6,7 @@
   max-width="800px"
 >
 <v-row>
-    <v-col 
-    style="padding:0px;"
+    <v-col
     cols="6">
           <v-img
       height="250"

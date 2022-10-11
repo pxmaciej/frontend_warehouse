@@ -30,7 +30,7 @@
                 color="success"
                 dark
                 class="mb-2 mr-2"
-                @click.prevent="addProductsToOrder(selected)"
+                @click.stop.prevent="addProductsToOrder(selected)"
             >Select Order Add Product</v-btn>
             
           </template>
@@ -83,9 +83,6 @@
         mdi-delete
       </v-icon>
     </template>
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize">Reset</v-btn>
-    </template>
   </v-data-table>
 </template>
 
@@ -111,7 +108,7 @@ export default {
       { text: 'Deliver Date', value: 'dateDeliver',  dataType: "Date" },
       { text: 'Actions', value: 'actions', sortable: false },
     ],
-    selected: null,
+    selected: [],
     editedIndex: -1,
     editedItem: {
       nameBuyer: '',
@@ -138,7 +135,9 @@ export default {
   },
   methods: {
     addProductsToOrder(selected) {
-      this.$router.push({name: 'orderList', params: { order: selected }})
+      if (selected.length !== 0) {
+        this.$router.push({name: 'orderList', params: { order: selected }})
+      }
     },
     
     editItem(item) {
@@ -151,10 +150,10 @@ export default {
       const index = this.orders.indexOf(item)
       confirm('Are you sure you want to delete this item?') && this.orders.splice(index, 1)
       axios.delete(API_ORDER+'destroy/'+item.id,{headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-           .then(res => {
-             console.log(res);
-             this.$emit('submit')
-           })
+      .then(res => {
+        console.log(res);
+        this.$emit('submit')
+      })
     },
     
     close () {
@@ -167,7 +166,7 @@ export default {
     
     save () {
       if (this.editedIndex > -1) {
-        axios.post(API_ORDER+'update', this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+        axios.patch(API_ORDER+'update/'+this.editedItem.id, this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
              .then(res => {
                console.log(res);
                this.$emit('submit')

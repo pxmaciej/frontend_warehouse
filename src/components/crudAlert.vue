@@ -81,7 +81,7 @@
 
 import axios from "axios";
 
-const API_ALERT = 'http://127.0.0.1:8000/api/alert/';
+const API_ALERT = 'http://127.0.0.1:8000/api/alerts/';
 
 export default {
   name: 'crudAlert',

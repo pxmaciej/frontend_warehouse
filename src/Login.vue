@@ -17,9 +17,9 @@
     cols="6">
         <form>
         <v-text-field
-          v-model="user.email"
+          v-model="user.userName"
           :counter="10"
-          label="Email"
+          label="User Name"
           required
         ></v-text-field>
 
@@ -62,7 +62,7 @@ export default
 {
     data: () => ({
       user:{
-        email: '',
+        userName: '',
         password:'',
       },
       show: false,
@@ -96,7 +96,7 @@ export default
             });
       },
       clear () {
-        this.email = ''
+        this.userName = ''
         this.password = ''
       },
     }

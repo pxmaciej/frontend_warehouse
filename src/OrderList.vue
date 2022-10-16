@@ -19,8 +19,8 @@ import crudSelectProduct from "./components/crudSelectProduct";
 import crudOrderList from "./components/crudOrderList";
 import axios from "axios";
 
-const API_PRODUCT = 'http://127.0.0.1:8000/api/product/'
-const API_ORDER_LIST = 'http://127.0.0.1:8000/api/orderlist/'
+const API_PRODUCT = 'http://127.0.0.1:8000/api/products/'
+const API_ORDER_LIST = 'http://127.0.0.1:8000/api/orderlists/'
 
 export default {
   name: "OrderList",

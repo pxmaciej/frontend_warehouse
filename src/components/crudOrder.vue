@@ -42,8 +42,17 @@
             <v-card-text>
               <v-container>
                 <v-row>
-                  <v-col cols="12" sm="12" md="12">
+                  <v-col cols="12" sm="6" md="4">
                     <v-text-field v-model="editedItem.nameBuyer" label="Buyer name"></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="4">
+                    <v-text-field v-model="editedItem.address" label="Address"></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="4">
+                      <v-checkbox
+                              v-model="editedItem.status"
+                              :label="'status Deliver'"
+                      ></v-checkbox>
                   </v-col>
                 </v-row>
                 <v-row justify="space-between">
@@ -90,7 +99,7 @@
 
 import axios from "axios";
 
-const API_ORDER = 'http://127.0.0.1:8000/api/order/';
+const API_ORDER = 'http://127.0.0.1:8000/api/orders/';
 
 export default {
   name: 'crudOrder',
@@ -106,18 +115,24 @@ export default {
       },
       { text: 'Order Date', value: 'dateOrder',  dataType: "Date" },
       { text: 'Deliver Date', value: 'dateDeliver',  dataType: "Date" },
+      { text: 'Address', value: 'address'},
+      { text: 'Status', value: 'status'},
       { text: 'Actions', value: 'actions', sortable: false },
     ],
     selected: [],
     editedIndex: -1,
     editedItem: {
       nameBuyer: '',
+      status: false,
+      address: '',
       dateOrder: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
       dateDeliver: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
     },
     defaultItem: {
       nameBuyer: '',
-      dateOrder: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+      status: false,
+      address: '',
+      ateOrder: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
       dateDeliver: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
     },
   }),

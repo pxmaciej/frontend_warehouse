@@ -55,8 +55,8 @@
 
 import axios from "axios";
 
-const API_ORDER_LIST = 'http://127.0.0.1:8000/api/orderlist/'
-const API_PRODUCT = 'http://127.0.0.1:8000/api/product/'
+const API_ORDER_LIST = 'http://127.0.0.1:8000/api/orderlists/'
+const API_PRODUCT = 'http://127.0.0.1:8000/api/products/'
 
 export default {
   name: 'crudProduct',

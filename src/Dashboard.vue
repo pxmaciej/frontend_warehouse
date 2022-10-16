@@ -1,6 +1,6 @@
 <template>
  <div class="container">
-   <notifications position="bottom right" reverse="true" />
+   <notifications position="bottom right" reverse/>
     <div class="row">
 <!--        <div class="col-12">
             <sparkle-product :products="products"></sparkle-product>
@@ -8,7 +8,7 @@
     </div>
     <div class="row">
         <div class="col-6">
-            <crudProduct :products="products" @submit="restart"></crudProduct>
+            <crudProduct :products="products" :categories="categories" @submit="restart"></crudProduct>
         </div>
         <div class="col-6">
             <measureProduct :measureProducts="measureProducts"></measureProduct>
@@ -35,10 +35,11 @@ import measureProduct from './components/measureProduct.vue'
 //import sparkleProduct from "./components/sparkleProduct";
 import axios from 'axios'
 
-const API_PRODUCT = 'http://127.0.0.1:8000/api/product/index'
+const API_PRODUCT = 'http://127.0.0.1:8000/api/products/index'
 const API_AUTH = 'http://127.0.0.1:8000/api/auth/'
-const API_ORDER = 'http://127.0.0.1:8000/api/order/index'
-const API_ALERT = 'http://127.0.0.1:8000/api/alert/index'
+const API_ORDER = 'http://127.0.0.1:8000/api/orders/index'
+const API_ALERT = 'http://127.0.0.1:8000/api/alerts/index'
+const API_CATEGORY = 'http://127.0.0.1:8000/api/categories/index'
 
 export default {name: 'Dashboard', components:{
 		//sparkleProduct,
@@ -49,6 +50,7 @@ export default {name: 'Dashboard', components:{
 	}, data () {
 		return{
 			products: [],
+            categories: [],
 			orders: [],
 			alerts: [],
 			measureProducts: [],
@@ -80,6 +82,10 @@ export default {name: 'Dashboard', components:{
 		
 			this.selectMeasure();
 			})
+        axios.get(API_CATEGORY, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+             .then(res => {
+                 this.categories = res.data
+             })
 		
 		axios.get(API_ORDER, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
 		.then(res => {

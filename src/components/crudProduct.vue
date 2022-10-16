@@ -36,7 +36,16 @@
                     <v-text-field v-model="editedItem.name" label="Product name"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.category" label="Category"></v-text-field>
+                      <v-select
+                              v-model="editedItem.categories"
+                              :hint="`${categories.name}`"
+                              :items="categories"
+                              item-text="name"
+                              item-value="id"
+                              label="Select Category"
+                              persistent-hint
+                              single-line
+                      ></v-select>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field v-model="editedItem.company" label="Company"></v-text-field>
@@ -82,11 +91,11 @@
 
 import axios from "axios";
 
-const API_PRODUCT = 'http://127.0.0.1:8000/api/product/';
+const API_PRODUCT = 'http://127.0.0.1:8000/api/products/';
 
 export default {
   name: 'crudProduct',
-  props: ['products'],
+  props: ['products', 'categories'],
   data: () => ({
     dialog: false,
     headers: [
@@ -97,7 +106,6 @@ export default {
         value: 'name',
       },
       { text: 'id', value: 'id' },
-      { text: 'Category', value: 'category' },
       { text: 'Company', value: 'company' },
       { text: 'Amount', value: 'amount' },
       { text: 'Price', value: 'price' },
@@ -106,14 +114,14 @@ export default {
     editedIndex: -1,
     editedItem: {
       name: '',
-      category: '',
+      categories: [],
       company: '',
       amount: 0,
       price: 0,
     },
     defaultItem: {
       name: '',
-      category: '',
+      categories: [],
       company: '',
       amount: 0,
       price: 0,

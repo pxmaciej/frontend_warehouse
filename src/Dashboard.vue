@@ -14,6 +14,11 @@
             <measureProduct :measureProducts="measureProducts"></measureProduct>
         </div>
     </div>
+     <div class="row">
+         <div class="col-12">
+             <crudCategory :categories="categories" @submit="restart"></crudCategory>
+         </div>
+     </div>
    <div class="row">
      <div class="col-12">
        <crudOrder :orders="orders" @submit="restart"></crudOrder>
@@ -24,6 +29,11 @@
        <crudAlert :alerts="alerts" :products="products" @submit="restartAlert"></crudAlert>
      </div>
    </div>
+     <div class="row">
+         <div class="col-12">
+             <crudStatistic :statistics="statistics" @submit="restart"></crudStatistic>
+         </div>
+     </div>
  </div>
 </template>
 
@@ -32,6 +42,8 @@ import crudProduct from './components/crudProduct.vue'
 import crudOrder from "./components/crudOrder"
 import crudAlert from "./components/crudAlert";
 import measureProduct from './components/measureProduct.vue'
+import crudCategory from "./components/crudCategory";
+import crudStatistic from "./components/crudStatistic";
 //import sparkleProduct from "./components/sparkleProduct";
 import axios from 'axios'
 
@@ -40,13 +52,16 @@ const API_AUTH = 'http://127.0.0.1:8000/api/auth/'
 const API_ORDER = 'http://127.0.0.1:8000/api/orders/index'
 const API_ALERT = 'http://127.0.0.1:8000/api/alerts/index'
 const API_CATEGORY = 'http://127.0.0.1:8000/api/categories/index'
+const API_STATISTICS = 'http://127.0.0.1:8000/api/statistics/index'
 
 export default {name: 'Dashboard', components:{
 		//sparkleProduct,
 		crudProduct,
 		measureProduct,
 		crudOrder,
-		crudAlert
+		crudAlert,
+        crudCategory,
+        crudStatistic
 	}, data () {
 		return{
 			products: [],
@@ -54,6 +69,7 @@ export default {name: 'Dashboard', components:{
 			orders: [],
 			alerts: [],
 			measureProducts: [],
+            statistics: []
 		}
 	},
 	computed: {
@@ -81,7 +97,8 @@ export default {name: 'Dashboard', components:{
 			this.products = res.data
 		
 			this.selectMeasure();
-			})
+        })
+        
         axios.get(API_CATEGORY, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
              .then(res => {
                  this.categories = res.data
@@ -106,6 +123,11 @@ export default {name: 'Dashboard', components:{
                 })
             })
         })
+        
+        axios.get(API_STATISTICS, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+             .then(res => {
+                 this.statistics = res.data
+             })
 	},
 	methods: {
 		selectMeasure() {
@@ -127,6 +149,16 @@ export default {name: 'Dashboard', components:{
 			.then(res => {
 				this.orders = res.data
 			})
+            
+            axios.get(API_CATEGORY, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+            .then(res => {
+                this.categories = res.data
+            })
+            
+            axios.get(API_STATISTICS, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+            .then(res => {
+                this.statistics = res.data
+            })
 		},
     restartAlert() {
       axios.get(API_ALERT, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})

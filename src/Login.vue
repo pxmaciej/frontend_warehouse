@@ -6,21 +6,20 @@
   max-width="800px"
 >
 <v-row>
-    <v-col 
-    style="padding:0px;"
+    <v-col
     cols="6">
           <v-img
       height="250"
-      src="../assets/dog.jpg"
+      src="./assets/dog.jpg"
     ></v-img>
     </v-col>
     <v-col 
     cols="6">
         <form>
         <v-text-field
-          v-model="user.email"
+          v-model="user.userName"
           :counter="10"
-          label="Email"
+          label="User Name"
           required
         ></v-text-field>
 
@@ -55,47 +54,54 @@
 </template>
 
 <script>
-import AuthService from "../services/auth.service.js"
+import axios from 'axios';
 
+const API_AUTH = 'http://127.0.0.1:8000/api/auth/'
 
-  export default {
-    components: {
-    },
+export default
+{
     data: () => ({
       user:{
-        email: '',
+        userName: '',
         password:'',
       },
       show: false,
     }),
 
-    mounted(){
-        if(this.$store.state.token != ''){
-         if(AuthService.check(this.$store.state.token)){
-           this.$router.push('/dashboard')
-         }else{
-          this.$store.commit('clearToken');
-         }
-        }
-        
+    mounted()
+    {
+      if(this.$store.state.token !== '')
+      {
+        axios.post(API_AUTH + 'checkToken', { token : this.$store.state.token} )
+            .then( res => {
+              if(res.data.success){
+                this.$router.push('/dashboard');
+              }
+            }).catch(err => {
+              this.$store.commit('clearToken');
+              this.$router.push('/login');
+              console.log(err.data);
+        })
+      }
     },
     methods: {
       submit () {
-        if(this.user.email&&this.user.password){
-          if(AuthService.login(this.user))
-          this.$router.push('/dashboard')
-        }
-
+        axios.post(API_AUTH + 'login', this.user)
+            .then(res => {
+              this.$store.commit('setToken', res.data.access_token);
+              this.$router.push('/dashboard');
+            })
+            .catch(err => {
+              console.log(err.data);
+            });
       },
       clear () {
-        this.email = ''
+        this.userName = ''
         this.password = ''
       },
-    },
+    }
 }
-  
 </script>
 <style>
-
 </style>
 

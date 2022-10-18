@@ -1,6 +1,7 @@
-import Dashboard from './components/Dashboard'
+import Dashboard from './Dashboard'
 import HelloWorld from './components/HelloWorld'
-import Login from './components/Login'
+import Login from './Login'
+import OrderList from "./OrderList";
 
 
 export const routes = [
@@ -16,5 +17,11 @@ export const routes = [
     {
         path : '/dashboard',
         component: Dashboard,
+    },
+    {
+        path : '/orderList/:order',
+        name: 'orderList',
+        component: OrderList,
+        props: true
     }
 ];

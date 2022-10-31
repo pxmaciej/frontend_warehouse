@@ -2,6 +2,7 @@ import Dashboard from './Dashboard'
 import HelloWorld from './components/HelloWorld'
 import Login from './Login'
 import OrderList from "./OrderList";
+import Product from "./Product";
 
 
 export const routes = [
@@ -22,6 +23,12 @@ export const routes = [
         path : '/orderList/:order',
         name: 'orderList',
         component: OrderList,
+        props: true
+    },
+    {
+        path : '/product/show/:product',
+        name: 'product/show',
+        component: Product,
         props: true
     }
 ];

@@ -46,7 +46,7 @@
                     <v-text-field v-model="editedItem.nameBuyer" label="Buyer name"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.address" label="Address"></v-text-field>
+                    <v-textarea v-model="editedItem.address" label="Address"></v-textarea>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                       <v-checkbox

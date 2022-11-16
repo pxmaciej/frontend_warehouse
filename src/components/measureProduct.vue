@@ -1,7 +1,7 @@
 <template>
 <div class="row">
-    <div v-for="index in measureProducts.slice(0,10)" :key="index.id" class="col-4">
-          <h3 class="text-uppercase">{{ index.name}}</h3>
+    <div v-for="index in tenProducts" :key="index.id" class="col-4">
+          <h3 class="text-uppercase">{{ index.name }}</h3>
           <v-progress-circular
           :rotate="360"
           :size="100"
@@ -12,27 +12,44 @@
           {{ index.amount }}
           </v-progress-circular>
     </div>
+    
 </div>
 </template>
 
 <script>
 
 export default {
-  name: 'MeasureProduct',
+  name: 'measureProducts',
 
-  props: ['measureProducts'],
+  props: ['products'],
 
   comments:{},
 
   data () {
     return{
+        tenProducts: []
     }
   },
 
-  async mounted() {
-  },
-
-  methods: {
+    watch: {
+        products: function () {
+            this.tenProducts = [];
+            this.products.forEach((product) => {
+                if (product.amount < 100) {
+                    this.tenProducts.push(product);
+                }
+            });
+        }
+    },
+    mounted() {
+        this.products.forEach((product) => {
+            if (product.amount < 100) {
+                this.tenProducts.push(product);
+            }
+        });
+    },
+    
+    methods: {
   }
 }
 </script>

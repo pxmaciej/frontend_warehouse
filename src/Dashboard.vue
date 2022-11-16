@@ -2,6 +2,19 @@
  <div class="container">
    <notifications position="bottom right" reverse/>
     <div class="row">
+        <v-menu offset-y>
+            <template v-slot:activator="{ on, attrs }">
+                <v-btn color="warning" dark v-bind="attrs" v-on="on">
+                    Alerts
+                    <v-badge color="green" :content="alerts.length"></v-badge>
+                </v-btn>
+            </template>
+            <v-list>
+                <v-list-item v-for="(alert, index) in alerts" :key="index">
+                    <v-list-item-title>{{ alert.name }} </v-list-item-title>
+                </v-list-item>
+            </v-list>
+        </v-menu>
 <!--        <div class="col-12">
             <sparkle-product :products="products"></sparkle-product>
         </div>-->
@@ -11,7 +24,7 @@
             <crudProduct :products="products" :categories="categories" @submit="restart"></crudProduct>
         </div>
         <div class="col-6">
-            <measureProduct :measureProducts="measureProducts"></measureProduct>
+            <measureProduct :products="products"></measureProduct>
         </div>
     </div>
      <div class="row">
@@ -25,9 +38,12 @@
      </div>
    </div>
    <div class="row">
-     <div class="col-12">
+     <div class="col-6">
        <crudAlert :alerts="alerts" :products="products" @submit="restartAlert"></crudAlert>
      </div>
+       <div class="col-6">
+           <limitAlert :products="products" @submit="restartAlert"></limitAlert>
+       </div>
    </div>
      <div class="row">
          <div class="col-12">
@@ -45,6 +61,7 @@ import measureProduct from './components/measureProduct.vue'
 import crudCategory from "./components/crudCategory";
 import crudStatistic from "./components/crudStatistic";
 //import sparkleProduct from "./components/sparkleProduct";
+import limitAlert from "./components/limitAlert";
 import axios from 'axios'
 
 const API_PRODUCT = 'http://127.0.0.1:8000/api/products/index'
@@ -61,14 +78,14 @@ export default {name: 'Dashboard', components:{
 		crudOrder,
 		crudAlert,
         crudCategory,
-        crudStatistic
+        crudStatistic,
+        limitAlert,
 	}, data () {
 		return{
 			products: [],
             categories: [],
 			orders: [],
 			alerts: [],
-			measureProducts: [],
             statistics: []
 		}
 	},
@@ -95,8 +112,6 @@ export default {name: 'Dashboard', components:{
 		axios.get(API_PRODUCT, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
 		.then(res => {
 			this.products = res.data
-		
-			this.selectMeasure();
         })
         
         axios.get(API_CATEGORY, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
@@ -105,24 +120,14 @@ export default {name: 'Dashboard', components:{
              })
 		
 		axios.get(API_ORDER, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-		.then(res => {
-			this.orders = res.data
-		})
+            .then(res => {
+                this.orders = res.data
+            })
 		
 		axios.get(API_ALERT, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-		.then(res => {
-            this.alerts = res.data
-            this.alerts.forEach((alert) => {
-                alert.productName = this.products.find(product => product.id === alert.product_id).name
-                this.$notify({
-                   title: 'Important message',
-                   text: alert.name,
-                   type: 'warn',
-                   duration: 5000,
-                   speed: 1000,
-                })
+            .then(res => {
+                this.alerts = res.data
             })
-        })
         
         axios.get(API_STATISTICS, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
              .then(res => {
@@ -130,19 +135,10 @@ export default {name: 'Dashboard', components:{
              })
 	},
 	methods: {
-		selectMeasure() {
-			this.products.forEach((value) => {
-				if (value.amount < 100) {
-					this.measureProducts.push(value);
-				}
-			})
-		},
 		restart() {
 			axios.get(API_PRODUCT, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
 			.then(res => {
 				this.products = res.data
-			
-				this.selectMeasure();
 			})
 			
 			axios.get(API_ORDER, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
@@ -160,23 +156,12 @@ export default {name: 'Dashboard', components:{
                 this.statistics = res.data
             })
 		},
-    restartAlert() {
-      axios.get(API_ALERT, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-      .then(res => {
-        this.alerts = res.data
-        
-        this.alerts.forEach((alert) => {
-          alert.productName = this.products.find(product => product.id === alert.product_id).name;
-          this.$notify({
-            title: 'Important message',
-            text: alert.name,
-            type: 'warn',
-            duration: 10000,
-            speed: 2000,
-          })
-        })
-      })
-    }
+        restartAlert() {
+            axios.get(API_ALERT, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+            .then(res => {
+                this.alerts = res.data
+            })
+        }
 	}
 }
 </script>

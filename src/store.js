@@ -10,6 +10,7 @@ export const store = new Vuex.Store( {
         role: localStorage.getItem('role')||'',
         userdata: localStorage.getItem('user')||[],
         selected: localStorage.getItem('selected')||'',
+        limit: localStorage.getItem('limit')||'',
     },
     mutations : {
         setToken (state,token){
@@ -35,6 +36,10 @@ export const store = new Vuex.Store( {
         setSelected (state,selected){
             localStorage.setItem('selected',selected );
             state.selected = selected;
+        },
+        setLimit (state, limit){
+            localStorage.setItem('limit', limit);
+            state.limit = limit;
         }
     }
 })

@@ -3,6 +3,7 @@ import HelloWorld from './components/HelloWorld'
 import Login from './Login'
 import OrderList from "./OrderList";
 import Product from "./Product";
+import ContactForm from "./ContactForm";
 
 
 export const routes = [
@@ -30,5 +31,10 @@ export const routes = [
         name: 'product/show',
         component: Product,
         props: true
+    },
+    {
+        path : '/contact',
+        component: ContactForm,
     }
+
 ];

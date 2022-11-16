@@ -17,11 +17,11 @@
         <v-dialog v-model="dialog" max-width="800px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
-                color="primary"
-                dark
-                class="mb-2"
-                v-bind="attrs"
-                v-on="on"
+            color="primary"
+            dark
+            class="mb-2"
+            v-bind="attrs"
+            v-on="on"
             >New Item</v-btn>
           </template>
           <v-card>
@@ -44,7 +44,6 @@
                         persistent-hint
                         single-line
                     ></v-select>
-                    <v-text-field v-model="editedItem.product_id" label="Product"></v-text-field>
                   </v-col>
                 </v-row>
               </v-container>
@@ -100,14 +99,12 @@ export default {
     ],
     editedIndex: -1,
     editedItem: {
-      nameBuyer: '',
       product_id: 0,
-      productName: '',
+      name: '',
     },
     defaultItem: {
-      nameBuyer: '',
       product_id: 0,
-      productName: '',
+      name: '',
     },
   }),
   
@@ -118,7 +115,6 @@ export default {
   },
   
   mounted: async function () {
-  
   },
   
   watch: {

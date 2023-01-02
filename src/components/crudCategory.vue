@@ -22,7 +22,7 @@
                 class="mb-2"
                 v-bind="attrs"
                 v-on="on"
-            >New Item</v-btn>
+            >New Category</v-btn>
           </template>
           <v-card>
             <v-card-title>
@@ -102,38 +102,38 @@ export default {
   
   computed: {
     formTitle () {
-      return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+      return this.editedIndex === -1 ? 'New Category' : 'Edit Category';
     },
   },
   
   watch: {
     dialog (val) {
-      val || this.close()
+      val || this.close();
     },
   },
   methods: {
     editItem (item) {
-      this.editedIndex = this.categories.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      this.dialog = true
+      this.editedIndex = this.categories.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      this.dialog = true;
     },
     
     deleteItem (item) {
-      const index = this.categories.indexOf(item)
-      confirm('Are you sure you want to delete this item?') && this.categories.splice(index, 1)
+      const index = this.categories.indexOf(item);
+      confirm('Are you sure you want to delete this item?') && this.categories.splice(index, 1);
       axios.delete(API_CATEGORIES+'destroy/'+item.id, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
            .then(res => {
              console.log(res);
-             this.$emit('submit')
-           })
+             this.$emit('submit');
+           });
     },
     
     close () {
-      this.dialog = false
+      this.dialog = false;
       this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      })
+        this.editedItem = Object.assign({}, this.defaultItem);
+        this.editedIndex = -1;
+      });
     },
     
     save () {
@@ -141,16 +141,16 @@ export default {
         axios.patch(API_CATEGORIES+'update/' + this.editedItem.id, this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
              .then(res => {
                console.log(res);
-               this.$emit('submit')
-             })
+               this.$emit('submit');
+             });
       } else {
         axios.post(API_CATEGORIES+'store', this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
              .then(res => {
                console.log(res);
-               this.$emit('submit')
-             })
+               this.$emit('submit');
+             });
       }
-      this.close()
+      this.close();
     }
   }
 }

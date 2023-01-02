@@ -25,13 +25,13 @@
                 class="mb-2"
                 v-bind="attrs"
                 v-on="on"
-            >New Item</v-btn>
+            >New Order</v-btn>
             <v-btn
                 color="success"
                 dark
                 class="mb-2 mr-2"
                 @click.stop.prevent="addProductsToOrder(selected)"
-            >Select Order Add Product</v-btn>
+            >Show</v-btn>
             
           </template>
           <v-card>
@@ -139,44 +139,44 @@ export default {
   
   computed: {
     formTitle () {
-      return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+      return this.editedIndex === -1 ? 'New Order' : 'Edit Order';
     },
   },
   
   watch: {
     dialog (val) {
-      val || this.close()
+      val || this.close();
     },
   },
   methods: {
     addProductsToOrder(selected) {
       if (selected.length !== 0) {
-        this.$router.push({name: 'orderList', params: { order: selected }})
+        this.$router.push({name: 'orderList', params: { order: selected }});
       }
     },
     
     editItem(item) {
-      this.editedIndex = this.orders.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      this.dialog = true
+      this.editedIndex = this.orders.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      this.dialog = true;
     },
     
     deleteItem(item) {
-      const index = this.orders.indexOf(item)
-      confirm('Are you sure you want to delete this item?') && this.orders.splice(index, 1)
+      const index = this.orders.indexOf(item);
+      confirm('Are you sure you want to delete this item?') && this.orders.splice(index, 1);
       axios.delete(API_ORDER+'destroy/'+item.id,{headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
       .then(res => {
         console.log(res);
-        this.$emit('submit')
-      })
+        this.$emit('submit');
+      });
     },
     
     close () {
-      this.dialog = false
+      this.dialog = false;
       this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      })
+        this.editedItem = Object.assign({}, this.defaultItem);
+        this.editedIndex = -1;
+      });
     },
     
     save () {
@@ -184,16 +184,16 @@ export default {
         axios.patch(API_ORDER+'update/'+this.editedItem.id, this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
              .then(res => {
                console.log(res);
-               this.$emit('submit')
-             })
+               this.$emit('submit');
+             });
       } else {
         axios.post(API_ORDER+'store', this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
              .then(res => {
                console.log(res);
-               this.$emit('submit')
-             })
+               this.$emit('submit');
+             });
       }
-      this.close()
+      this.close();
     }
   }
 }

@@ -1,6 +1,6 @@
 <template>
 <div class="row">
-    <div v-for="index in tenProducts" :key="index.id" class="col-4">
+    <div v-for="index in measureProducts.slice(0,5)" :key="index.id" class="col-4">
           <h3 class="text-uppercase">{{ index.name }}</h3>
           <v-progress-circular
           :rotate="360"
@@ -27,16 +27,16 @@ export default {
 
   data () {
     return{
-        tenProducts: []
+        measureProducts: []
     }
   },
 
     watch: {
         products: function () {
-            this.tenProducts = [];
+            this.measureProducts = [];
             this.products.forEach((product) => {
                 if (product.amount < 100) {
-                    this.tenProducts.push(product);
+                    this.measureProducts.push(product);
                 }
             });
         }
@@ -44,7 +44,7 @@ export default {
     mounted() {
         this.products.forEach((product) => {
             if (product.amount < 100) {
-                this.tenProducts.push(product);
+                this.measureProducts.push(product);
             }
         });
     },

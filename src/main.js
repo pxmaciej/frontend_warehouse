@@ -14,6 +14,7 @@ Vue.use(VueRouter)
 Vue.use(SmartTable)
 Vue.use(Notifications)
 
+
 const router = new VueRouter({
   routes: routes,
   mode : 'history'

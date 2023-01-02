@@ -31,8 +31,8 @@
 
 import axios from "axios";
 
-const API_ORDER_LIST = 'http://127.0.0.1:8000/api/orderlists/'
-const API_PRODUCT = 'http://127.0.0.1:8000/api/products/'
+const API_ORDER_LIST = 'http://127.0.0.1:8000/api/orderlists/';
+const API_PRODUCT = 'http://127.0.0.1:8000/api/products/';
 
 export default {
   name: 'crudOrderList',
@@ -48,7 +48,7 @@ export default {
       },
       { text: 'Amount', value: 'amount'},
       { text: 'Price', value: 'price' },
-      { text: 'Name Buyer', value: 'NameBuyer' },
+      { text: 'Name Buyer', value: 'nameBuyer' },
       { text: 'Actions', value: 'actions', sortable: false },
     ],
     editedIndex: -1,
@@ -76,23 +76,23 @@ export default {
 		deleteItem(item) {
 			axios.delete(API_ORDER_LIST+'destroy/'+item.id,{headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
 			.then(res => {
-				console.log(res)
-				this.$emit('submit')
+				console.log(res);
+				this.$emit('submit');
 				this.$notify({
 					title: 'Notification',
 					text: 'Success delete Item',
 					type: 'success',
 					duration: 5000,
 					speed: 2000,
-				})
-			})
-      this.product.id = item.product_id
-      this.product.amount = item.amount + this.products.find(product => product.id === this.product.id).amount
-      console.log(this.product.amount)
-      axios.patch(API_PRODUCT + 'update/'+this.product.id, this.product, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-      .then(res => {
-        console.log(res);
-      })
+				});
+			});
+            this.product.id = item.product_id;
+            this.product.amount = item.amount + this.products.find(product => product.id === this.product.id).amount;
+            console.log(this.product.amount);
+            axios.patch(API_PRODUCT + 'update/'+this.product.id, this.product, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+            .then(res => {
+            console.log(res);
+            });
 		},
   }
 }

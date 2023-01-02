@@ -1,16 +1,16 @@
 import Dashboard from './Dashboard'
-import HelloWorld from './components/HelloWorld'
 import Login from './Login'
 import OrderList from "./OrderList";
 import Product from "./Product";
 import ContactForm from "./ContactForm";
+import Profile from "./Profile";
 
 
 export const routes = [
 
     {
         path : '/',
-        component: HelloWorld,
+        component: Dashboard,
     },
     {
         path : '/login',
@@ -19,6 +19,10 @@ export const routes = [
     {
         path : '/dashboard',
         component: Dashboard,
+    },
+    {
+        path : '/profile',
+        component: Profile,
     },
     {
         path : '/orderList/:order',

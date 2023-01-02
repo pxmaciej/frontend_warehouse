@@ -31,7 +31,7 @@ export default {
             if(this.name && this.email && this.message) {
                 try {
                     emailjs.sendForm('service_k6m8klr', 'template_404aweh', this.$refs.form,
-                                     '0SJDaSwBwKN3SxYz1')
+                                     '0SJDaSwBwKN3SxYz1');
 
                 } catch(error) {
                     console.log({error})
@@ -41,19 +41,20 @@ export default {
                         type: 'error',
                         duration: 5000,
                         speed: 1000,
-                    })
+                    });
                 }
-                // Reset form field
-                this.name = ''
-                this.email = ''
-                this.message = ''
+                
+                this.name = '';
+                this.email = '';
+                this.message = '';
+                
                 this.$notify({
                     title: 'Success',
                     text: 'Success send Message',
                     type: 'success',
                     duration: 5000,
                     speed: 1000,
-                })
+                });
             } else {
                 this.$notify({
                     title: 'Warning',
@@ -61,7 +62,7 @@ export default {
                     type: 'warn',
                     duration: 5000,
                     speed: 1000,
-                })
+                });
             }
         }
     }

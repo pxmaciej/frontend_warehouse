@@ -55,8 +55,8 @@
 
 import axios from "axios";
 
-const API_ORDER_LIST = 'http://127.0.0.1:8000/api/orderlists/'
-const API_PRODUCT = 'http://127.0.0.1:8000/api/products/'
+const API_ORDER_LIST = 'http://127.0.0.1:8000/api/orderlists/';
+const API_PRODUCT = 'http://127.0.0.1:8000/api/products/';
 
 export default {
   name: 'crudProduct',
@@ -71,7 +71,7 @@ export default {
         value: 'name',
       },
       { text: 'id', value: 'id' },
-      { text: 'Category', value: 'category' },
+      { text: 'Category', value: 'categories' },
       { text: 'Company', value: 'company' },
       { text: 'Amount', value: 'amount' },
       { text: 'Price', value: 'price' },
@@ -97,42 +97,43 @@ export default {
   
   watch: {
     dialog (val) {
-      val || this.close()
+      val || this.close();
     },
   },
   
   methods: {
     close () {
-      this.dialog = false
+      this.dialog = false;
     },
     
     save () {
-      this.product.id = this.selected['0'].id
-      this.editedItem.order_id = this.order['0'].id
-      this.editedItem.product_id = this.selected['0'].id
-      this.editedItem.price = this.selected['0'].price * this.editedItem.amount
+      this.product.id = this.selected['0'].id;
+      this.editedItem.order_id = this.order['0'].id;
+      this.editedItem.product_id = this.selected['0'].id;
+      this.editedItem.price = this.selected['0'].price * this.editedItem.amount;
       
       if (this.selected['0'].amount >= this.editedItem.amount) {
         axios.post(API_ORDER_LIST + 'store', this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
         .then(res => {
-          console.log(res.data)
-          this.$emit('submit')
+          console.log(res.data);
+          this.$emit('submit');
+          
           this.$notify({
             title: 'Success',
             text: 'Success Add Product To Order',
             type: 'success',
             duration: 5000,
             speed: 2000,
-          })
-        })
+          });
+        });
         
-        this.product.amount = this.selected['0'].amount - this.editedItem.amount
+        this.product.amount = this.selected['0'].amount - this.editedItem.amount;
         axios.patch(API_PRODUCT + 'update/'+this.product.id, this.product, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
         .then(res => {
           console.log(res);
-        })
+        });
         
-        this.close()
+        this.close();
       } else {
         this.$notify({
           title: 'Error',
@@ -140,7 +141,7 @@ export default {
           type: 'error',
           duration: 5000,
           speed: 2000,
-        })
+        });
       }
     }
   }

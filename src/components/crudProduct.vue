@@ -110,7 +110,6 @@ export default {
             {
                 text: 'Name',
                 align: 'start',
-                sortable: false,
                 value: 'name',
             },
             { text: 'id', value: 'id' },

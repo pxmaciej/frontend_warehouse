@@ -1,16 +1,53 @@
 <template>
-    <div class="container">
-            <notifications position="bottom right"/>
-            <form ref="form" @submit.prevent="sendEmail">
-                <label>Name</label>
-                <input type="text" name="name" v-model="name" class="feedback-input" >
-                <label>Email</label>
-                <input type="email" name="email" v-model="email" class="feedback-input" >
-                <label>Message</label>
-                <textarea name="message" v-model="message" class="feedback-input" ></textarea>
-                <input type="submit" value="Send">
-            </form>
-    </div>
+    <v-card
+            class="mx-auto my-12"
+            max-width="374"
+    >
+        <v-card-title>Send Email</v-card-title>
+        <v-card-text>
+            <v-form
+                    ref="form"
+                    v-model="valid"
+                    lazy-validation
+            >
+                <v-text-field
+                        v-model="editedItem.name"
+                        name="name"
+                        :counter="10"
+                        :rules="nameRules"
+                        label="Name"
+                        required
+                ></v-text-field>
+
+                <v-text-field
+                        v-model="editedItem.email"
+                        :rules="emailRules"
+                        name="email"
+                        label="E-mail"
+                        required
+                ></v-text-field>
+                <v-textarea
+                        outlined
+                        auto-grow
+                        rows="1"
+                        row-height="15"
+                        v-model="editedItem.message"
+                        name="message"
+                        label="Message"
+                        required
+                ></v-textarea>
+                
+                <v-btn
+                        :disabled="!valid"
+                        color="success"
+                        class="mr-4"
+                        @click="sendEmail"
+                >
+                    Submit
+                </v-btn>
+            </v-form>
+        </v-card-text>
+    </v-card>
 </template>
 
 <script>
@@ -21,18 +58,31 @@ export default {
     
     data() {
         return {
-            name: '',
-            email: '',
-            message: ''
+            valid: false,
+            nameRules: [
+                v => !!v || 'Name is required',
+                v => (v && v.length <= 10) || 'Name must be less than 10 characters',
+            ],
+            emailRules: [
+                v => !!v || 'E-mail is required',
+                v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+            ],
+            editedItem: {
+                name: '',
+                email: '',
+                message: ''
+            }
         }
     },
     methods: {
         sendEmail() {
-            if(this.name && this.email && this.message) {
+            if(this.valid) {
                 try {
-                    emailjs.sendForm('service_k6m8klr', 'template_404aweh', this.$refs.form,
-                                     '0SJDaSwBwKN3SxYz1');
-
+                    emailjs.sendForm(
+                        'service_k6m8klr',
+                        'template_404aweh',
+                        this.$refs.form.$el,
+                        '0SJDaSwBwKN3SxYz1');
                 } catch(error) {
                     console.log({error})
                     this.$notify({
@@ -70,43 +120,4 @@ export default {
 </script>
 
 <style scoped>
-form { max-width:420px; margin:50px auto; }
-.feedback-input {
-    color:black;
-    font-weight:500;
-    border-radius: 5px;
-    line-height: 22px;
-    background-color: transparent;
-    border:2px solid black;
-    transition: all 0.3s;
-    padding: 13px;
-    margin-bottom: 15px;
-    width:100%;
-    box-sizing: border-box;
-    outline:0;
-}
-
-.feedback-input:focus { border:2px solid red; }
-
-textarea {
-    height: 150px;
-    line-height: 150%;
-    resize:vertical;
-}
-
-[type="submit"] {
-    width: 100%;
-    background:green;
-    border-radius:5px;
-    border:0;
-    cursor:pointer;
-    color:white;
-    font-size:24px;
-    padding-top:10px;
-    padding-bottom:10px;
-    transition: all 0.3s;
-    margin-top:-4px;
-    font-weight:700;
-}
-[type="submit"]:hover { background:blue; }
 </style>

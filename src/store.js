@@ -6,7 +6,7 @@ Vue.use(Vuex);
 export const store = new Vuex.Store( {
     state:{
         token: localStorage.getItem('auth')||'',
-        user: localStorage.getItem('id')||'',
+        userId: localStorage.getItem('id')||'',
         role: localStorage.getItem('role')||'',
         userdata: localStorage.getItem('user')||[],
         selected: localStorage.getItem('selected')||'',
@@ -23,7 +23,7 @@ export const store = new Vuex.Store( {
         },
         setUserId (state,user){
             localStorage.setItem('id',user );
-            state.user = user;
+            state.userId = user;
         },
         setUserRole (state,role){
             localStorage.setItem('role',role );

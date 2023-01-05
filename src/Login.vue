@@ -90,6 +90,7 @@ export default
                  .then(res => {
                      this.$store.commit('setToken', res.data.access_token);
                      this.$store.commit('setUserRole', res.data.user.role);
+                     this.$store.commit('setUserId', res.data.user.id);
                      console.log(res.data);
                      this.$router.push('/dashboard');
                  })

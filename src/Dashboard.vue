@@ -37,17 +37,22 @@
                 <crudOrder :orders="orders" @submit="restart"></crudOrder>
             </div>
         </div>
-        <div class="row">
+        <div class="row" v-if="role === 'admin'">
             <div class="col-6">
                 <crudAlert :alerts="alerts" :products="products" @submit="restartAlert"></crudAlert>
             </div>
             <div class="col-6">
-                <limitAlert :products="products" :role="role" @submit="restartAlert"></limitAlert>
+                <limitAlert :products="products" @submit="restartAlert"></limitAlert>
             </div>
         </div>
         <div class="row">
             <div class="col-12">
-                <crudStatistic :statistics="statistics" @submit="restart"></crudStatistic>
+                <crudUser  v-if="role === 'admin'"></crudUser>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <crudStatistic v-if="role === 'admin'" :statistics="statistics" @submit="restart"></crudStatistic>
             </div>
         </div>
     </div>
@@ -62,6 +67,7 @@ import crudCategory from "./components/crudCategory";
 import crudStatistic from "./components/crudStatistic";
 //import sparkleProduct from "./components/sparkleProduct";
 import limitAlert from "./components/limitAlert";
+import crudUser from "@/components/crudUser";
 import axios from 'axios'
 
 const API_PRODUCT = 'http://127.0.0.1:8000/api/products/index';
@@ -82,6 +88,7 @@ export default {
         crudCategory,
         crudStatistic,
         limitAlert,
+        crudUser
     }, data () {
         return{
             products: [],
@@ -96,12 +103,12 @@ export default {
 
     },
     mounted: async function () {
-        if(this.$store.state.token !== '')
-        {
+        if(this.$store.state.token !== '') {
             axios.post(API_AUTH + 'checkToken', {token : this.$store.state.token})
                  .then(res => {
                      if (res.data.success) {
                          console.log('success');
+                         this.role = this.$store.state.role;
                      }
                  }).catch(err => {
                 this.$store.commit('clearToken');
@@ -109,8 +116,8 @@ export default {
 
                 console.log(err.data);
             });
-
-            this.role = this.$store.state.role;
+        } else {
+            await this.$router.push('/login');
         }
 
         axios.get(API_PRODUCT, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})

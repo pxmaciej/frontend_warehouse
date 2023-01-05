@@ -1,5 +1,7 @@
 <template>
-    <v-row>
+    <v-card>
+    <v-card-title>User Profile</v-card-title>
+    <v-card-text>
         <v-form
                 ref="form"
                 v-model="valid"
@@ -27,7 +29,7 @@
                     required
             ></v-text-field>
 
-            <v-select label="Role" v-model="role" :items="roles" />
+            <v-select v-if="role === 'admin'" label="Role" v-model="role" :items="roles" />
             
             <v-text-field
                     label="Password"
@@ -53,30 +55,18 @@
                     :disabled="!valid"
                     color="success"
                     class="mr-4"
-                    @click="validate"
+                    @click="submit"
             >
-                Validate
-            </v-btn>
-
-            <v-btn
-                    color="error"
-                    class="mr-4"
-                    @click="reset"
-            >
-                Reset Form
-            </v-btn>
-
-            <v-btn
-                    color="warning"
-                    @click="resetValidation"
-            >
-                Reset Validation
+                Submit
             </v-btn>
         </v-form>
-    </v-row>
+    </v-card-text>
+    </v-card>
 </template>
 
 <script>
+import axios from "axios";
+
 function validatePhoneNumber(phoneNumber) {
     if (typeof phoneNumber !== 'string') {
         return false;
@@ -90,11 +80,14 @@ function validatePhoneNumber(phoneNumber) {
     return regex.test(digits);
 }
 
+const API_AUTH = 'http://127.0.0.1:8000/api/auth/';
+
+
 export default {
     name: "formProfile",
     
     data: () => ({
-        valid: true,
+        valid: false,
         name: '',
         nameRules: [
             v => !!v || 'Name is required',
@@ -113,7 +106,16 @@ export default {
         passwordRules: [
             v => !!v || 'Password is required.'
         ],
-        roles: ['user', 'admin']
+        roles: ['user', 'admin'],
+        role: '',
+        editedItem: {
+            id: '',
+            name: '',
+            login: '',
+            phone: '',
+            password: '',
+            password_confirmation: ''
+        },
     }),
     
     computed: {
@@ -121,21 +123,28 @@ export default {
             return this.password === this.password_confirmation;
         }
     },
+
+    mounted: async function () {
+        this.role = this.$store.state.role;
+    },
     
     methods: {
-        validate() {
-            this.$refs.form.validate()
-                .then(valid => {
-                    if (valid) {
-                        // Form is valid, do something (e.g. send a request to the backend)
-                    }
-                })
-        },
-        reset() {
-            this.$refs.form.reset()
-        },
-        resetValidation() {
-            this.$refs.form.resetValidation()
+        submit() {
+            if(this.valid){
+                this.editedItem.id = this.$store.state.userId;
+                this.editedItem.name = this.name;
+                this.editedItem.login = this.login;
+                this.editedItem.phone = this.phone.substring(1);
+                this.editedItem.role = this.role;
+                this.editedItem.password = this.password;
+                this.editedItem.password_confirmation = this.password_confirmation;
+                
+                axios.patch(API_AUTH+'update', this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+                     .then(res => {
+                         console.log(res);
+                         this.$emit('submit');
+                     });
+            }
         },
     },
     

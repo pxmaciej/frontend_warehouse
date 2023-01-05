@@ -8,12 +8,11 @@ import { store } from './store'
 import SmartTable from 'vuejs-smart-table'
 import Notifications from 'vue-notification'
 
-Vue.use(VeeValidate)
-Vue.config.productionTip = false
-Vue.use(VueRouter)
-Vue.use(SmartTable)
-Vue.use(Notifications)
-
+Vue.use(VeeValidate);
+Vue.config.productionTip = false;
+Vue.use(VueRouter);
+Vue.use(SmartTable);
+Vue.use(Notifications);
 
 const router = new VueRouter({
   routes: routes,
@@ -26,4 +25,3 @@ new Vue({
   store : store,
   render: h => h(App)
 }).$mount('#app')
-

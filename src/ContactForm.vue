@@ -37,6 +37,8 @@
                         required
                 ></v-textarea>
                 
+                <vue-recaptcha sitekey="6LcT39MjAAAAAChqO4bbh2qTW1Ica_9X2-4IowBp"></vue-recaptcha>
+                
                 <v-btn
                         :disabled="!valid"
                         color="success"
@@ -52,9 +54,14 @@
 
 <script>
 import emailjs from 'emailjs-com';
+import { VueRecaptcha } from 'vue-recaptcha';
 
 export default {
     name: "ContactForm",
+    
+    components:{
+        VueRecaptcha
+    },
     
     data() {
         return {

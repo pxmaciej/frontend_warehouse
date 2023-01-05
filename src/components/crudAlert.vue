@@ -1,79 +1,91 @@
 <template>
-    <v-data-table
-            :headers="headers"
-            :items="alerts"
-            sort-by="name"
-            class="elevation-1"
-    >
-        <template v-slot:top>
-            <v-toolbar flat color="white">
-                <v-toolbar-title>List alerts:</v-toolbar-title>
-                <v-divider
-                        class="mx-4"
-                        inset
-                        vertical
-                ></v-divider>
-                <v-spacer></v-spacer>
-                <v-dialog v-model="dialog" max-width="800px">
-                    <template v-slot:activator="{ on, attrs }">
-                        <v-btn
-                                color="primary"
-                                dark
-                                class="mb-2"
-                                v-bind="attrs"
-                                v-on="on"
-                        >New Alert</v-btn>
-                    </template>
-                    <v-card>
-                        <v-card-title>
-                            <span class="headline">{{ formTitle }}</span>
-                        </v-card-title>
+    <v-card>
+        <v-card-title>
+            <v-text-field
+                    v-model="search"
+                    append-icon="mdi-magnify"
+                    label="Search"
+                    single-line
+                    hide-details
+            ></v-text-field>
+        </v-card-title>
+        <v-data-table
+                :headers="headers"
+                :items="alerts"
+                :search="search"
+                sort-by="name"
+                class="elevation-1"
+        >
+            <template v-slot:top>
+                <v-toolbar flat color="white">
+                    <v-toolbar-title>List alerts:</v-toolbar-title>
+                    <v-divider
+                            class="mx-4"
+                            inset
+                            vertical
+                    ></v-divider>
+                    <v-spacer></v-spacer>
+                    <v-dialog v-model="dialog" max-width="800px">
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                                    color="primary"
+                                    dark
+                                    class="mb-2"
+                                    v-bind="attrs"
+                                    v-on="on"
+                            >New Alert</v-btn>
+                        </template>
+                        <v-card>
+                            <v-card-title>
+                                <span class="headline">{{ formTitle }}</span>
+                            </v-card-title>
 
-                        <v-card-text>
-                            <v-container>
-                                <v-row>
-                                    <v-col cols="12" sm="12" md="12">
-                                        <v-text-field v-model="editedItem.name" label="Alert name"></v-text-field>
-                                        <v-select
-                                                v-model="editedItem.product_id"
-                                                :hint="`${products.name}`"
-                                                :items="products"
-                                                item-text="name"
-                                                item-value="id"
-                                                label="Select Porduct"
-                                                persistent-hint
-                                                single-line
-                                        ></v-select>
-                                    </v-col>
-                                </v-row>
-                            </v-container>
-                        </v-card-text>
+                            <v-card-text>
+                                <v-container>
+                                    <v-row>
+                                        <v-col cols="12" sm="12" md="12">
+                                            <v-text-field v-model="editedItem.name" label="Alert name"></v-text-field>
+                                            <v-select
+                                                    v-model="editedItem.product_id"
+                                                    :hint="`${products.name}`"
+                                                    :items="products"
+                                                    item-text="name"
+                                                    item-value="id"
+                                                    label="Select Porduct"
+                                                    persistent-hint
+                                                    single-line
+                                            ></v-select>
+                                        </v-col>
+                                    </v-row>
+                                </v-container>
+                            </v-card-text>
 
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                            <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-dialog>
-            </v-toolbar>
-        </template>
-        <template v-slot:item.actions="{ item }">
-            <v-icon
-                    small
-                    class="mr-2"
-                    @click="editItem(item)"
-            >
-                mdi-pencil
-            </v-icon>
-            <v-icon
-                    small
-                    @click="deleteItem(item)"
-            >
-                mdi-delete
-            </v-icon>
-        </template>
-    </v-data-table>
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
+                                <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </v-dialog>
+                </v-toolbar>
+            </template>
+            <template v-slot:item.actions="{ item }">
+                <v-icon
+                        small
+                        class="mr-2"
+                        @click="editItem(item)"
+                >
+                    mdi-pencil
+                </v-icon>
+                <v-icon
+                        small
+                        @click="deleteItem(item)"
+                >
+                    mdi-delete
+                </v-icon>
+            </template>
+        </v-data-table>
+    </v-card>
 </template>
 
 <script>
@@ -87,6 +99,7 @@ export default {
     props: ['alerts', 'products'],
     data: () => ({
         dialog: false,
+        search: '',
         headers: [
             {
                 text: 'Alert name',

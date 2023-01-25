@@ -4,7 +4,7 @@
         <div class="row">
             <v-menu offset-y>
                 <template v-slot:activator="{ on, attrs }">
-                    <v-btn color="warning" v-bind="attrs" v-on="on" fab dark large>
+                    <v-btn color="warning" v-bind="attrs" v-on="on" fab dark>
                         Alerts
                         <v-badge color="red" :content="alerts.length"></v-badge>
                     </v-btn>
@@ -52,7 +52,7 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <crudStatistic v-if="role === 'admin'" :statistics="statistics" @submit="restart"></crudStatistic>
+                <crudStatistic v-if="role === 'admin'" :statistics="statistics" :products="products" @submit="restart"></crudStatistic>
             </div>
         </div>
     </div>
@@ -68,17 +68,18 @@ import crudStatistic from "./components/crudStatistic";
 //import sparkleProduct from "./components/sparkleProduct";
 import limitAlert from "./components/limitAlert";
 import crudUser from "@/components/crudUser";
+import AuthService from '@/services/AuthService'
 import axios from 'axios'
 
 const API_PRODUCT = 'http://127.0.0.1:8000/api/products/index';
-const API_AUTH = 'http://127.0.0.1:8000/api/auth/';
 const API_ORDER = 'http://127.0.0.1:8000/api/orders/index';
 const API_ALERT = 'http://127.0.0.1:8000/api/alerts/index';
 const API_CATEGORY = 'http://127.0.0.1:8000/api/categories/index';
 const API_STATISTICS = 'http://127.0.0.1:8000/api/statistics/index';
 
 export default {
-        name: 'Dashboard',
+    name: 'Dashboard',
+    
     components:{
         //sparkleProduct,
         crudProduct,
@@ -88,8 +89,10 @@ export default {
         crudCategory,
         crudStatistic,
         limitAlert,
-        crudUser
-    }, data () {
+        crudUser,
+    },
+    
+    data () {
         return{
             products: [],
             categories: [],
@@ -99,52 +102,40 @@ export default {
             role: ""
         }
     },
+    
     computed: {
-
     },
+    
     mounted: async function () {
-        if(this.$store.state.token !== '') {
-            axios.post(API_AUTH + 'checkToken', {token : this.$store.state.token})
-                 .then(res => {
-                     if (res.data.success) {
-                         console.log('success');
-                         this.role = this.$store.state.role;
-                     }
-                 }).catch(err => {
-                this.$store.commit('clearToken');
-                this.$router.push('/login');
+            if (await AuthService.isAuthenticated(this)) {
+                this.role = this.$store.state.role;
+                axios.get(API_PRODUCT, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+                     .then(res => {
+                         this.products = res.data;
+                     });
 
-                console.log(err.data);
-            });
-        } else {
-            await this.$router.push('/login');
-        }
+                axios.get(API_CATEGORY, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+                     .then(res => {
+                         this.categories = res.data;
+                     });
 
-        axios.get(API_PRODUCT, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-             .then(res => {
-                 this.products = res.data;
-             });
+                axios.get(API_ORDER, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+                     .then(res => {
+                         this.orders = res.data;
+                     });
 
-        axios.get(API_CATEGORY, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-             .then(res => {
-                 this.categories = res.data;
-             });
+                axios.get(API_ALERT, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+                     .then(res => {
+                         this.alerts = res.data;
+                     });
 
-        axios.get(API_ORDER, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-             .then(res => {
-                 this.orders = res.data;
-             });
-
-        axios.get(API_ALERT, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-             .then(res => {
-                 this.alerts = res.data;
-             });
-
-        axios.get(API_STATISTICS, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-             .then(res => {
-                 this.statistics = res.data;
-             });
+                axios.get(API_STATISTICS, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+                     .then(res => {
+                         this.statistics = res.data;
+                     });
+            }
     },
+    
     methods: {
         restart() {
             axios.get(API_PRODUCT, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})

@@ -16,6 +16,15 @@
                 sort-by="name"
                 class="elevation-1"
         >
+            <template
+                    v-for="header in headers.filter((header) =>
+                header.hasOwnProperty('formatter')
+              )"
+                    v-slot:[`item.${header.value}`]="{ header, value }"
+            >
+                {{ header.formatter(value) }}
+            </template>
+            
             <template v-slot:top>
                 <v-toolbar flat color="white">
                     <v-toolbar-title>List alerts:</v-toolbar-title>
@@ -107,7 +116,7 @@ export default {
                 sortable: false,
                 value: 'name',
             },
-            { text: 'Product Name', value: 'productName', sortable: false },
+            { text: 'Product Name', value: 'product_name' },
             { text: 'Actions', value: 'actions', sortable: false },
         ],
         editedIndex: -1,
@@ -146,8 +155,7 @@ export default {
             const index = this.alerts.indexOf(item);
             confirm('Are you sure you want to delete this item?') && this.alerts.splice(index, 1);
             axios.delete(API_ALERT+'destroy/'+item.id,{headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                 .then(res => {
-                     console.log(res);
+                 .then(() => {
                      this.$emit('submit');
                  });
         },

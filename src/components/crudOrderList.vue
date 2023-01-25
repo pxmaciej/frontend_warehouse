@@ -45,6 +45,7 @@ import axios from "axios";
 
 const API_ORDER_LIST = 'http://127.0.0.1:8000/api/orderlists/';
 const API_PRODUCT = 'http://127.0.0.1:8000/api/products/';
+const API_STATISTICS = 'http://127.0.0.1:8000/api/statistics/';
 
 export default {
     name: 'crudOrderList',
@@ -82,14 +83,19 @@ export default {
         product: {
             id: 0,
             amount: 0,
-        }
+        },
+        statisticItem: {
+            name: '',
+            product_id: 0,
+            amount: 0,
+            price: 0,
+        },
     }),
 
     methods: {
         deleteItem(item) {
             axios.delete(API_ORDER_LIST+'destroy/'+item.id,{headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                 .then(res => {
-                     console.log(res);
+                 .then(() => {
                      this.$emit('submit');
                      this.$notify({
                                       title: 'Notification',
@@ -99,13 +105,20 @@ export default {
                                       speed: 2000,
                                   });
                  });
+            
             this.product.id = item.product_id;
+            
             this.product.amount = item.amount + this.products.find(product => product.id === this.product.id).amount;
-            console.log(this.product.amount);
+            
             axios.patch(API_PRODUCT + 'update/'+this.product.id, this.product, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                 .then(res => {
-                     console.log(res);
-                 });
+
+            this.statisticItem.name = 'Order delete product';
+            this.statisticItem.product_id = this.product.id;
+            this.statisticItem.amount = item.amount;
+            this.statisticItem.price = this.product.price;
+            
+            axios.post(API_STATISTICS+'store', this.statisticItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}});
+         
         },
     }
 }

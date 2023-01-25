@@ -14,6 +14,7 @@
 <script>
 import formProfile from "./components/formProfile";
 import profileData from "@/components/profileData";
+import AuthService from '@/services/AuthService'
 
 export default {
     name: "Profile",
@@ -21,6 +22,10 @@ export default {
     components:{
         formProfile,
         profileData
+    },
+    
+    mounted: async function () {
+        await AuthService.isAuthenticated(this)
     }
 }
 </script>

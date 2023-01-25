@@ -91,6 +91,7 @@ export default
                      this.$store.commit('setToken', res.data.access_token);
                      this.$store.commit('setUserRole', res.data.user.role);
                      this.$store.commit('setUserId', res.data.user.id);
+                     this.$store.commit('setUserData', res.data.user);
                      console.log(res.data);
                      this.$router.push('/dashboard');
                  })
@@ -98,6 +99,7 @@ export default
                      console.log(err.data);
                  });
         },
+        
         clear () {
             this.login = '';
             this.password = '';

@@ -70,6 +70,7 @@ import axios from "axios";
 
 const API_ORDER_LIST = 'http://127.0.0.1:8000/api/orderlists/';
 const API_PRODUCT = 'http://127.0.0.1:8000/api/products/';
+const API_STATISTICS = 'http://127.0.0.1:8000/api/statistics/';
 
 export default {
     name: 'crudProduct',
@@ -90,6 +91,12 @@ export default {
             { text: 'Amount', value: 'amount' },
             { text: 'Price', value: 'price' },
         ],
+        statisticItem: {
+            name: '',
+            product_id: 0,
+            amount: 0,
+            price: 0,
+        },
         editedItem: {
             product_id: 0,
             order_id: 0,
@@ -128,8 +135,7 @@ export default {
 
             if (this.selected['0'].amount >= this.editedItem.amount) {
                 axios.post(API_ORDER_LIST + 'store', this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                     .then(res => {
-                         console.log(res.data);
+                     .then(() => {
                          this.$emit('submit');
 
                          this.$notify({
@@ -142,11 +148,16 @@ export default {
                      });
 
                 this.product.amount = this.selected['0'].amount - this.editedItem.amount;
-                axios.patch(API_PRODUCT + 'update/'+this.product.id, this.product, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                     .then(res => {
-                         console.log(res);
-                     });
-
+                
+                axios.patch(API_PRODUCT + 'update/'+this.product.id, this.product, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}});
+                
+                this.statisticItem.name = 'Order product';
+                this.statisticItem.product_id = this.product.id;
+                this.statisticItem.amount = this.product.amount;
+                this.statisticItem.price = this.selected['0'].price;
+                
+                axios.post(API_STATISTICS+'store', this.statisticItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}});
+                
                 this.close();
             } else {
                 this.$notify({

@@ -33,10 +33,19 @@
               <v-container>
                 <v-row>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.name" label="Product name"></v-text-field>
+                    <v-text-field v-model="editedItem.name" label="Statistic name"></v-text-field>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.product_id" label="Company"></v-text-field>
+                      <v-select
+                              v-model="editedItem.product_id"
+                              :hint="`${products.name}`"
+                              :items="products"
+                              item-text="name"
+                              item-value="id"
+                              label="Select Porduct"
+                              persistent-hint
+                              single-line
+                      ></v-select>
                   </v-col>
                   <v-col cols="12" sm="6" md="4">
                     <v-text-field v-model="editedItem.amount" label="Amount"></v-text-field>
@@ -83,7 +92,7 @@ const API_STATISTICS = 'http://127.0.0.1:8000/api/statistics/';
 
 export default {
   name: 'crudStatistic',
-  props: ['statistics'],
+  props: ['statistics', 'products'],
   data: () => ({
     dialog: false,
     headers: [
@@ -93,7 +102,7 @@ export default {
         sortable: false,
         value: 'name',
       },
-      { text: 'Product', value: 'product_id' },
+      { text: 'Product', value: 'product_name' },
       { text: 'Amount', value: 'amount' },
       { text: 'Price', value: 'price' },
       { text: 'Actions', value: 'actions', sortable: false },

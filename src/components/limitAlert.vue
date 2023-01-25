@@ -18,7 +18,7 @@
                 </v-btn>
             </v-form>
         </v-card-text>
-        
+
     </v-card>
 </template>
 
@@ -41,22 +41,19 @@ export default {
 
     watch: {
         products: function() {
-            if (this.limit) {
-                this.products.forEach((product) => {
-                    if (product.amount <= this.limit) {
-                        this.alert.name = product.name;
-                        this.alert.product_id = product.id;
+            this.products.forEach((product) => {
+                if (product.amount <= this.limit) {
+                    this.alert.name = product.name;
+                    this.alert.product_id = product.id;
 
-                        axios.post(API_ALERT + 'store', this.alert, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                             .then(res => {
-                                 console.log(res);
-                                 this.$emit('submit');
-                             }).catch(error => {
-                            console.log(error);
-                        });
-                    }
-                });
-            }
+                    axios.post(API_ALERT + 'store', this.alert, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+                         .then(() => {
+                             this.$emit('submit');
+                         }).catch(error => {
+                        console.log(error);
+                    });
+                }
+            });
         }
 
     },
@@ -64,7 +61,6 @@ export default {
     mounted() {
         axios.get(API_ALERT + 'limit', {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
              .then(res => {
-                 console.log(res);
                  this.limit = res.data;
              }).catch(error => {
             console.log(error);

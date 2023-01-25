@@ -60,6 +60,7 @@
 
 <script>
 import axios from "axios";
+import AuthService from "@/services/AuthService";
 
 const API_PRODUCTS_SHOW = 'http://127.0.0.1:8000/api/products/show/';
 const API_PRODUCTS_ORDER = 'http://127.0.0.1:8000/api/products/order/';
@@ -78,19 +79,21 @@ export default {
     },
 
     mounted: async function () {
-        axios.get(API_PRODUCTS_SHOW+this.product['0'].id, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-             .then(res => {
-                 this.showProduct = res.data;
-             });
-
-        axios.get(API_PRODUCTS_ORDER+this.product['0'].id, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-             .then(res => {
-                 res.data.forEach((order) => {
-                     if (order.status === 0) {
-                         this.showOrder.push(order);
-                     }
+        if (await AuthService.isAuthenticated(this)) {
+            axios.get(API_PRODUCTS_SHOW+this.product['0'].id, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+                 .then(res => {
+                     this.showProduct = res.data;
                  });
-             });
-    },
+
+            axios.get(API_PRODUCTS_ORDER+this.product['0'].id, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+                 .then(res => {
+                     res.data.forEach((order) => {
+                         if (order.status === 0) {
+                             this.showOrder.push(order);
+                         }
+                     });
+                 });
+        }
+    }
 }
 </script>

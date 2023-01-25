@@ -64,7 +64,6 @@ export default {
                  this.name = res.data.name;
                  this.login = res.data.login;
                  this.phone = res.data.phone;
-                 
              });
     }
 }

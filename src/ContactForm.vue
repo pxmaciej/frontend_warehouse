@@ -81,6 +81,7 @@ export default {
             }
         }
     },
+    
     methods: {
         sendEmail() {
             if(this.valid) {

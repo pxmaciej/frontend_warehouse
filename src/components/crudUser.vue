@@ -16,6 +16,14 @@
             class="elevation-1"
             :search="search"
         >
+            <template
+                    v-for="header in headers.filter((header) =>
+                header.hasOwnProperty('formatter')
+              )"
+                    v-slot:[`item.${header.value}`]="{ header, value }"
+            >
+                {{ header.formatter(value) }}
+            </template>
             <template v-slot:top>
                 <v-toolbar flat color="white">
                     <v-toolbar-title>List Users:</v-toolbar-title>
@@ -24,7 +32,9 @@
                             inset
                             vertical
                     ></v-divider>
+                    
                     <v-spacer></v-spacer>
+                    
                     <v-dialog v-model="dialog" max-width="500px">
                         <template v-slot:activator="{ on, attrs }">
                             <v-btn
@@ -35,11 +45,11 @@
                                     v-on="on"
                             >New User</v-btn>
                         </template>
+                        
                         <v-card>
                             <v-card-title>
                                 <span class="headline">{{ formTitle }}</span>
                             </v-card-title>
-        
                             <v-card-text>
                                 <v-container>
                                     <v-row>
@@ -100,6 +110,7 @@
                                 <v-btn color="blue darken-1" text @click="save">Save</v-btn>
                             </v-card-actions>
                         </v-card>
+                        
                     </v-dialog>
                 </v-toolbar>
             </template>
@@ -124,7 +135,7 @@
 
 <script>
 import axios from "axios";
-import moment from 'moment';
+import moment from "moment";
 
 function validatePhoneNumber(phoneNumber) {
     if (typeof phoneNumber !== 'string') {
@@ -160,8 +171,8 @@ export default {
             { text: 'Login', value: 'login' },
             { text: 'Phone', value: 'phone' },
             { text: 'Role', value: 'role' },
-            { text: 'Updated Date', value: 'updated_at',},
-            { text: 'Created Date ', value: 'created_at' },
+            { text: 'Updated Date', value: 'updated_at', formatter: (x) => (x ? moment(x).format("DD-MM-YYYY HH:MM") : null)},
+            { text: 'Created Date ', value: 'created_at', formatter: (x) => (x ? moment(x).format("DD-MM-YYYY HH:MM") : null)},
             { text: 'Actions', value: 'actions', sortable: false },
         ],
         selected: [],

@@ -9,6 +9,10 @@
             </v-btn>
         </div>
       <v-spacer></v-spacer>
+        <v-btn href="/profile" text>
+            <span class="mr-2">Profile</span>
+            <v-icon>mdi-open-in-new</v-icon>
+        </v-btn>
           <v-btn href="/contact" text>
               <span class="mr-2">Contact</span>
               <v-icon>mdi-open-in-new</v-icon>

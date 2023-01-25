@@ -8,9 +8,7 @@ export const store = new Vuex.Store( {
         token: localStorage.getItem('auth')||'',
         userId: localStorage.getItem('id')||'',
         role: localStorage.getItem('role')||'',
-        userdata: localStorage.getItem('user')||[],
-        selected: localStorage.getItem('selected')||'',
-        limit: localStorage.getItem('limit')||'',
+        userData: localStorage.getItem('user')||[],
     },
     mutations : {
         setToken (state,token){
@@ -29,17 +27,9 @@ export const store = new Vuex.Store( {
             localStorage.setItem('role',role );
             state.role = role;
         },
-        setUserData (state,userdata){
-            localStorage.setItem('user',JSON.stringify(userdata));
-            state.userdata = userdata;
-        },
-        setSelected (state,selected){
-            localStorage.setItem('selected',selected );
-            state.selected = selected;
-        },
-        setLimit (state, limit){
-            localStorage.setItem('limit', limit);
-            state.limit = limit;
+        setUserData (state,userData){
+            localStorage.setItem('user',JSON.stringify(userData));
+            state.userData = userData;
         }
     }
 })

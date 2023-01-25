@@ -112,6 +112,7 @@
 import axios from "axios";
 
 const API_PRODUCT = 'http://127.0.0.1:8000/api/products/';
+const API_STATISTICS = 'http://127.0.0.1:8000/api/statistics/';
 
 export default {
     name: 'crudProduct',
@@ -148,6 +149,12 @@ export default {
             amount: 0,
             price: 0,
         },
+        statisticItem: {
+            name: '',
+            product_id: 0,
+            amount: 0,
+            price: 0,
+        },
     }),
 
     computed: {
@@ -171,6 +178,10 @@ export default {
         editItem (item) {
             this.editedIndex = this.products.indexOf(item);
             this.editedItem = Object.assign({}, item);
+            this.statisticItem.name = 'Edited product';
+            this.statisticItem.product_id = this.editedItem.id;
+            this.statisticItem.amount = item.amount;
+            this.statisticItem.price = this.editedItem.price;
             this.dialog = true;
         },
 
@@ -195,6 +206,12 @@ export default {
         save () {
             if (this.editedIndex > -1) {
                 axios.patch(API_PRODUCT+'update/' + this.editedItem.id, this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+                     .then(res => {
+                         console.log(res);
+                         this.$emit('submit');
+                     });
+                
+                axios.post(API_STATISTICS+'store', this.statisticItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
                      .then(res => {
                          console.log(res);
                          this.$emit('submit');

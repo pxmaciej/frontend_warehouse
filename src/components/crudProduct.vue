@@ -189,9 +189,16 @@ export default {
             const index = this.products.indexOf(item);
             confirm('Are you sure you want to delete this item?') && this.products.splice(index, 1);
             axios.delete(API_PRODUCT+'destroy/'+item.id,{headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                 .then(res => {
-                     console.log(res);
+                 .then(() => {
                      this.$emit('submit');
+
+                     this.$notify({
+                                      title: 'Success',
+                                      text: 'Success Delete Product',
+                                      type: 'success',
+                                      duration: 3000,
+                                      speed: 2000,
+                                  });
                  });
         },
 
@@ -206,21 +213,34 @@ export default {
         save () {
             if (this.editedIndex > -1) {
                 axios.patch(API_PRODUCT+'update/' + this.editedItem.id, this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                     .then(res => {
-                         console.log(res);
+                     .then(() => {
                          this.$emit('submit');
+
+                         this.$notify({
+                                          title: 'Success',
+                                          text: 'Success Update Product',
+                                          type: 'success',
+                                          duration: 3000,
+                                          speed: 2000,
+                                      });
                      });
                 
                 axios.post(API_STATISTICS+'store', this.statisticItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                     .then(res => {
-                         console.log(res);
+                     .then(() => {
                          this.$emit('submit');
                      });
             } else {
                 axios.post(API_PRODUCT+'store', this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                     .then(res => {
-                         console.log(res);
+                     .then(() => {
                          this.$emit('submit');
+                         
+                         this.$notify({
+                                          title: 'Success',
+                                          text: 'Success Add Product',
+                                          type: 'success',
+                                          duration: 3000,
+                                          speed: 2000,
+                                      });
                      });
             }
             this.close();

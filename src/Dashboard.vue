@@ -15,13 +15,15 @@
                     </v-list-item>
                 </v-list>
             </v-menu>
-            <!--        <div class="col-12">
-                        <sparkle-product :products="products"></sparkle-product>
-                    </div>-->
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <sparkleProduct :products="products"></sparkleProduct>
+            </div>
         </div>
         <div class="row">
             <div class="col-8">
-                <crudProduct :products="products" :categories="categories" @submit="restart"></crudProduct>
+                <crudProduct :products="products" :categories="categories" @submit="getData"></crudProduct>
             </div>
             <div class="col-4">
                 <measureProduct :products="products"></measureProduct>
@@ -29,20 +31,20 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <crudCategory :categories="categories" @submit="restart"></crudCategory>
+                <crudCategory :categories="categories" @submit="getData"></crudCategory>
             </div>
         </div>
         <div class="row">
             <div class="col-12">
-                <crudOrder :orders="orders" @submit="restart"></crudOrder>
+                <crudOrder :orders="orders" @submit="getData"></crudOrder>
             </div>
         </div>
         <div class="row" v-if="role === 'admin'">
             <div class="col-6">
-                <crudAlert :alerts="alerts" :products="products" @submit="restartAlert"></crudAlert>
+                <crudAlert :alerts="alerts" :products="products" @submit="getAlerts"></crudAlert>
             </div>
             <div class="col-6">
-                <limitAlert :products="products" @submit="restartAlert"></limitAlert>
+                <limitAlert :products="products" :alerts="alerts" @submit="getAlerts"></limitAlert>
             </div>
         </div>
         <div class="row">
@@ -52,7 +54,7 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <crudStatistic v-if="role === 'admin'" :statistics="statistics" :products="products" @submit="restart"></crudStatistic>
+                <crudStatistic v-if="role === 'admin'" :statistics="statistics" :products="products" @submit="getData"></crudStatistic>
             </div>
         </div>
     </div>
@@ -65,7 +67,7 @@ import crudAlert from "./components/crudAlert";
 import measureProduct from './components/measureProduct.vue'
 import crudCategory from "./components/crudCategory";
 import crudStatistic from "./components/crudStatistic";
-//import sparkleProduct from "./components/sparkleProduct";
+import sparkleProduct from "./components/sparkleProduct";
 import limitAlert from "./components/limitAlert";
 import crudUser from "@/components/crudUser";
 import AuthService from '@/services/AuthService'
@@ -81,7 +83,7 @@ export default {
     name: 'Dashboard',
     
     components:{
-        //sparkleProduct,
+        sparkleProduct,
         crudProduct,
         measureProduct,
         crudOrder,
@@ -106,38 +108,41 @@ export default {
     computed: {
     },
     
+    created: async function() {
+        if (await AuthService.isAuthenticated(this)) {
+            this.role = this.$store.state.role;
+            axios.get(API_PRODUCT, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+                 .then(res => {
+                     this.products = res.data;
+                 });
+
+            axios.get(API_CATEGORY, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+                 .then(res => {
+                     this.categories = res.data;
+                 });
+
+            axios.get(API_ORDER, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+                 .then(res => {
+                     this.orders = res.data;
+                 });
+
+            axios.get(API_ALERT, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+                 .then(res => {
+                     this.alerts = res.data;
+                 });
+
+            axios.get(API_STATISTICS, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+                 .then(res => {
+                     this.statistics = res.data;
+                 });
+        }
+    },
+
     mounted: async function () {
-            if (await AuthService.isAuthenticated(this)) {
-                this.role = this.$store.state.role;
-                axios.get(API_PRODUCT, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                     .then(res => {
-                         this.products = res.data;
-                     });
-
-                axios.get(API_CATEGORY, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                     .then(res => {
-                         this.categories = res.data;
-                     });
-
-                axios.get(API_ORDER, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                     .then(res => {
-                         this.orders = res.data;
-                     });
-
-                axios.get(API_ALERT, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                     .then(res => {
-                         this.alerts = res.data;
-                     });
-
-                axios.get(API_STATISTICS, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                     .then(res => {
-                         this.statistics = res.data;
-                     });
-            }
     },
     
     methods: {
-        restart() {
+        getData() {
             axios.get(API_PRODUCT, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
                  .then(res => {
                      this.products = res.data;
@@ -158,7 +163,8 @@ export default {
                      this.statistics = res.data;
                  });
         },
-        restartAlert() {
+        
+        getAlerts() {
             axios.get(API_ALERT, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
                  .then(res => {
                      this.alerts = res.data;

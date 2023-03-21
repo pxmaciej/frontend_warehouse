@@ -78,9 +78,9 @@ export default
                          this.$router.push('/dashboard');
                      }
                  }).catch(err => {
+                console.log(err.data);
                 this.$store.commit('clearToken');
                 this.$router.push('/login');
-                console.log(err.data);
             })
         }
     },
@@ -92,7 +92,6 @@ export default
                      this.$store.commit('setUserRole', res.data.user.role);
                      this.$store.commit('setUserId', res.data.user.id);
                      this.$store.commit('setUserData', res.data.user);
-                     console.log(res.data);
                      this.$router.push('/dashboard');
                  })
                  .catch(err => {

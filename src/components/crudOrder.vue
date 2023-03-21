@@ -178,9 +178,16 @@ export default {
             const index = this.orders.indexOf(item);
             confirm('Are you sure you want to delete this item?') && this.orders.splice(index, 1);
             axios.delete(API_ORDER+'destroy/'+item.id,{headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                 .then(res => {
-                     console.log(res);
+                 .then(() => {
                      this.$emit('submit');
+
+                     this.$notify({
+                                      title: 'Success',
+                                      text: 'Success Delete Order',
+                                      type: 'success',
+                                      duration: 3000,
+                                      speed: 2000,
+                                  });
                  });
         },
 
@@ -195,15 +202,29 @@ export default {
         save () {
             if (this.editedIndex > -1) {
                 axios.patch(API_ORDER+'update/'+this.editedItem.id, this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                     .then(res => {
-                         console.log(res);
+                     .then(() => {
                          this.$emit('submit');
+
+                         this.$notify({
+                                          title: 'Success',
+                                          text: 'Success Update Order',
+                                          type: 'success',
+                                          duration: 3000,
+                                          speed: 2000,
+                                      });
                      });
             } else {
                 axios.post(API_ORDER+'store', this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                     .then(res => {
-                         console.log(res);
+                     .then(() => {
                          this.$emit('submit');
+
+                         this.$notify({
+                                          title: 'Success',
+                                          text: 'Success Add Order',
+                                          type: 'success',
+                                          duration: 3000,
+                                          speed: 2000,
+                                      });
                      });
             }
             this.close();

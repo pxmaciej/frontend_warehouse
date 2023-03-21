@@ -1,43 +1,46 @@
 <template>
-  <div>
-    <v-sparkline
-        :value="productAmount"
-        :gradient="gradient"
-        :smooth="radius || false"
-        :padding="padding"
-        :line-width="lineWidth"
-        :stroke-linecap="lineCap"
-        :gradient-direction="gradientDirection"
-        :fill="fill"
-        :type="type"
-        :auto-line-width="autoLineWidth" auto-draw
-        :show-labels="showLabels"
-        :label-size="labelSize"
-    ></v-sparkline>
-  </div>
-  
+  <v-card>
+      <v-card-title>Wykres Produktów</v-card-title>
+          <v-sparkline
+                  :type="type"
+                  :value="valueSet"
+                  :labels="labelSet"
+                  :auto-line-width="true"
+                  :padding="1"
+                  :smooth="2"
+                  :gradient="['red', 'orange', 'yellow']"
+                  :show-labels="true"
+          ></v-sparkline>
+  </v-card>
 </template>
 
 <script>
 export default {
-  name: "sparkleProduct",
-  props: ['products'],
-  
-  data: () => ({
-    productAmount: [],
-    productDate: []
-  }),
-  
-  mounted:  async function () {
-    
-      this.products.forEach( (product) => {
-          this.productAmount.push(product.amount)
-          this.productDate.push(product.date)
-      })
-  }
+    name: 'sparkleProduct',
+    props: ['products'],
+
+    data: () => ({
+        type: 'bar',
+        data: [],
+    }),
+    computed: {
+        valueSet() {
+            return this.products.map(product => product.amount);
+        },
+        labelSet() {
+            return this.products.map(product => product.name + ' ' + product.amount);
+        }
+        
+    },
+    methods: {
+        getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        },
+    },
 }
 </script>
-
-<style scoped>
-
-</style>

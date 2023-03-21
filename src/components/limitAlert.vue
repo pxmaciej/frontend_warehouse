@@ -29,7 +29,7 @@ const API_ALERT = 'http://127.0.0.1:8000/api/alerts/';
 
 export default {
     name: "limitAlert",
-    props: ['products'],
+    props: ['products','alerts'],
 
     data: () => ({
         limit: 0,
@@ -55,10 +55,9 @@ export default {
                 }
             });
         }
-
     },
 
-    mounted() {
+    created() {
         axios.get(API_ALERT + 'limit', {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
              .then(res => {
                  this.limit = res.data;
@@ -70,8 +69,14 @@ export default {
     methods: {
         setLimit() {
             axios.get(API_ALERT + 'limit/' + this.limit, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                 .then(res => {
-                     console.log(res);
+                 .then(() => {
+                     this.$notify({
+                                      title: 'Success',
+                                      text: 'Success Set Limit',
+                                      type: 'success',
+                                      duration: 3000,
+                                      speed: 2000,
+                                  });
                  }).catch(error => {
                 console.log(error);
             });

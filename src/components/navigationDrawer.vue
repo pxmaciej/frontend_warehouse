@@ -18,7 +18,7 @@
             <v-list-item>
                 <v-list-item-content>
                     <v-list-item-title class="text-h6">
-                        {{user.name}}
+                        {{user.phone}}
                     </v-list-item-title>
                     <v-list-item-subtitle>{{user.phone}}</v-list-item-subtitle>
                 </v-list-item-content>
@@ -57,7 +57,8 @@ import axios from "axios";
 
 const API_AUTH = 'http://127.0.0.1:8000/api/auth/';
 
-export default {
+export default
+{
     name: "navigationDrawer",
     
     props: ['isLoggedIn'],
@@ -66,7 +67,7 @@ export default {
         isLoggedIn: false,
         user: {
             name: this.$store.state.userData.name,
-            phone: this.$store.state.userData.phone
+            phone: this.$store.state.userData.phone,
         }
     }),
     
@@ -84,7 +85,6 @@ export default {
             axios.post(API_AUTH+'logout', { token : this.$store.state.token })
                  .then( res => {
                      console.log(res.data);
-                     this.$store.commit('clearToken');
                      this.isLoggedOut();
                      this.$router.push('/login');
                      localStorage.clear();

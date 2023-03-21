@@ -38,6 +38,7 @@
                             {{user['name']}}
                         </v-list-item-title>
                         <v-list-item-subtitle>
+                            {{user['phone']}}
                         </v-list-item-subtitle>
                     </v-list-item-content>
                 </v-list-item>
@@ -100,7 +101,7 @@ export default {
     data: function () {
         return {
             isLoggedIn: false,
-            user: this.$store.state.userData,
+            user: []
         }
     },
     
@@ -108,7 +109,6 @@ export default {
         isLogged() {
             this.isLoggedIn = true;
             this.user = this.$store.state.userData;
-            console.log(this.user.name);
         },
         
         isLoggedOut() {
@@ -116,9 +116,8 @@ export default {
         },
         
         logout() {
-            axios.post(API_AUTH+'logout', { token : this.$store.state.token })
-                 .then( res => {
-                     console.log(res.data);
+            axios.get(API_AUTH+'logout', {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+                 .then( () => {
                      this.$store.commit('clearToken');
                      this.isLoggedOut();
                      this.$router.push('/login');

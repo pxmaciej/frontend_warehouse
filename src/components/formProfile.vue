@@ -124,7 +124,7 @@ export default {
         }
     },
 
-    mounted: async function () {
+    created: async function () {
         this.role = this.$store.state.role;
     },
     
@@ -140,9 +140,16 @@ export default {
                 this.editedItem.password_confirmation = this.password_confirmation;
                 
                 axios.patch(API_AUTH+'update', this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                     .then(res => {
-                         console.log(res);
+                     .then(() => {
                          this.$emit('submit');
+
+                         this.$notify({
+                                          title: 'Success',
+                                          text: 'Success Update Profile',
+                                          type: 'success',
+                                          duration: 3000,
+                                          speed: 2000,
+                                      });
                      });
             }
         },

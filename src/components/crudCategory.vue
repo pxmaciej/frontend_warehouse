@@ -135,9 +135,16 @@ export default {
             const index = this.categories.indexOf(item);
             confirm('Are you sure you want to delete this item?') && this.categories.splice(index, 1);
             axios.delete(API_CATEGORIES+'destroy/'+item.id, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                 .then(res => {
-                     console.log(res);
+                 .then(() => {
                      this.$emit('submit');
+
+                     this.$notify({
+                                      title: 'Success',
+                                      text: 'Success Delete Category',
+                                      type: 'success',
+                                      duration: 3000,
+                                      speed: 2000,
+                                  });
                  });
         },
 
@@ -152,15 +159,29 @@ export default {
         save () {
             if (this.editedIndex > -1) {
                 axios.patch(API_CATEGORIES+'update/' + this.editedItem.id, this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                     .then(res => {
-                         console.log(res);
+                     .then(() => {
                          this.$emit('submit');
+
+                         this.$notify({
+                                          title: 'Success',
+                                          text: 'Success Update Category',
+                                          type: 'success',
+                                          duration: 3000,
+                                          speed: 2000,
+                                      });
                      });
             } else {
                 axios.post(API_CATEGORIES+'store', this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                     .then(res => {
-                         console.log(res);
+                     .then(() => {
                          this.$emit('submit');
+
+                         this.$notify({
+                                          title: 'Success',
+                                          text: 'Success Add Category',
+                                          type: 'success',
+                                          duration: 3000,
+                                          speed: 2000,
+                                      });
                      });
             }
             this.close();

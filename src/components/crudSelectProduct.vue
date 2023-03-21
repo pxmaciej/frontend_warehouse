@@ -142,7 +142,7 @@ export default {
                                           title: 'Success',
                                           text: 'Success Add Product To Order',
                                           type: 'success',
-                                          duration: 5000,
+                                          duration: 3000,
                                           speed: 2000,
                                       });
                      });

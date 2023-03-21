@@ -135,10 +135,7 @@ export default {
             return this.editedIndex === -1 ? 'New Alert' : 'Edit Alert';
         },
     },
-
-    mounted: async function () {
-    },
-
+    
     watch: {
         dialog (val) {
             val || this.close();
@@ -157,6 +154,14 @@ export default {
             axios.delete(API_ALERT+'destroy/'+item.id,{headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
                  .then(() => {
                      this.$emit('submit');
+                     
+                     this.$notify({
+                                      title: 'Success',
+                                      text: 'Success Delete Alert',
+                                      type: 'success',
+                                      duration: 3000,
+                                      speed: 2000,
+                                  });
                  });
         },
 
@@ -171,15 +176,29 @@ export default {
         save () {
             if (this.editedIndex > -1) {
                 axios.patch(API_ALERT+'update/'+ this.editedItem.id, this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                     .then(res => {
-                         console.log(res);
+                     .then(() => {
                          this.$emit('submit');
+
+                         this.$notify({
+                                          title: 'Success',
+                                          text: 'Success Update Alert',
+                                          type: 'success',
+                                          duration: 3000,
+                                          speed: 2000,
+                                      });
                      });
             } else {
                 axios.post(API_ALERT+'store', this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                     .then(res => {
-                         console.log(res);
+                     .then(() => {
                          this.$emit('submit');
+
+                         this.$notify({
+                                          title: 'Success',
+                                          text: 'Success Add Alert',
+                                          type: 'success',
+                                          duration: 3000,
+                                          speed: 2000,
+                                      });
                      });
             }
             this.close();

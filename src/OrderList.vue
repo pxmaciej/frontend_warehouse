@@ -2,12 +2,12 @@
   <div class="container">
     <div class="row">
       <div class="col-12">
-        <crud-select-product :order="order" :products="products" @submit="restart"></crud-select-product>
+        <crud-select-product :order="order" :products="products" @submit="getData"></crud-select-product>
       </div>
     </div>
     <div class="row">
       <div class="col-12">
-        <crud-order-list :orderList="orderList" :order="order" :products="products" @submit="restart"></crud-order-list>
+        <crud-order-list :orderList="orderList" :order="order" :products="products" @submit="getData"></crud-order-list>
       </div>
     </div>
 		<notifications position="bottom right"/>
@@ -40,7 +40,7 @@ export default {
     }
   },
 	
-  mounted: async function () {
+  created: async function () {
       if (await AuthService.isAuthenticated(this)) {
           axios.get(API_PRODUCT+'index', {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
                .then(res => {
@@ -54,7 +54,7 @@ export default {
       }
   },
   methods: {
-    restart(){
+    getData(){
 			axios.get(API_PRODUCT+'index', {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
 			.then(res => {
 				this.products = res.data;

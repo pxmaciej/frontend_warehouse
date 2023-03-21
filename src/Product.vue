@@ -78,7 +78,7 @@ export default {
         }
     },
 
-    mounted: async function () {
+    created: async function () {
         if (await AuthService.isAuthenticated(this)) {
             axios.get(API_PRODUCTS_SHOW+this.product['0'].id, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
                  .then(res => {

@@ -97,7 +97,7 @@ export default {
                         title: 'Error',
                         text: 'Something wrong!',
                         type: 'error',
-                        duration: 5000,
+                        duration: 3000,
                         speed: 1000,
                     });
                 }
@@ -110,7 +110,7 @@ export default {
                     title: 'Success',
                     text: 'Success send Message',
                     type: 'success',
-                    duration: 5000,
+                    duration: 3000,
                     speed: 1000,
                 });
             } else {
@@ -118,7 +118,7 @@ export default {
                     title: 'Warning',
                     text: 'All fields are required',
                     type: 'warn',
-                    duration: 5000,
+                    duration: 3000,
                     speed: 1000,
                 });
             }

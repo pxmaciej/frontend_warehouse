@@ -16,14 +16,11 @@
             class="elevation-1"
             :search="search"
         >
-            <template
-                    v-for="header in headers.filter((header) =>
-                header.hasOwnProperty('formatter')
-              )"
-                    v-slot:[`item.${header.value}`]="{ header, value }"
-            >
+            <template v-for="header in headers.filter((header) => header.hasOwnProperty('formatter'))"
+                      v-slot:[`item.${header.value}`]="{ header, value }">
                 {{ header.formatter(value) }}
             </template>
+            
             <template v-slot:top>
                 <v-toolbar flat color="white">
                     <v-toolbar-title>List Users:</v-toolbar-title>
@@ -164,15 +161,14 @@ export default {
             {
                 text: 'Name',
                 align: 'start',
-                sortable: false,
                 value: 'name',
             },
             { text: 'id', value: 'id' },
             { text: 'Login', value: 'login' },
             { text: 'Phone', value: 'phone' },
             { text: 'Role', value: 'role' },
-            { text: 'Updated Date', value: 'updated_at', formatter: (x) => (x ? moment(x).format("DD-MM-YYYY HH:MM") : null)},
-            { text: 'Created Date ', value: 'created_at', formatter: (x) => (x ? moment(x).format("DD-MM-YYYY HH:MM") : null)},
+            { text: 'Updated', value: 'updated_at', formatter: (x) => (x ? moment(x).format("DD-MM-YYYY HH:MM") : null)},
+            { text: 'Created', value: 'created_at', formatter: (x) => (x ? moment(x).format("DD-MM-YYYY HH:MM") : null)},
             { text: 'Actions', value: 'actions', sortable: false },
         ],
         selected: [],
@@ -211,8 +207,11 @@ export default {
         
     }),
     
-    mounted() {
-       this.getUsers();
+    created() {
+        axios.get(API_AUTH+'users',{headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+             .then(res => {
+                 this.users = res.data;
+             });
     },
 
     computed: {
@@ -235,13 +234,6 @@ export default {
             return moment(String(value)).format('MM/DD/YYYY hh:mm')
         },
         
-        getUsers() {
-            axios.get(API_AUTH+'users',{headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                 .then(res => {
-                     this.users = res.data;
-                 });
-        },
-        
         editItem (item) {
             this.editedIndex = this.users.indexOf(item);
             this.editedItem = Object.assign({}, item);
@@ -252,8 +244,14 @@ export default {
             const index = this.users.indexOf(item);
             confirm('Are you sure you want to delete this item?') && this.users.splice(index, 1);
             axios.delete(API_AUTH+'destroy/'+item.id, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                 .then(res => {
-                     console.log(res);
+                 .then(() => {
+                     this.$notify({
+                                      title: 'Success',
+                                      text: 'Success Delete User',
+                                      type: 'success',
+                                      duration: 3000,
+                                      speed: 2000,
+                                  });
                  });
         },
 
@@ -269,15 +267,29 @@ export default {
             if (this.editedIndex > -1) {
                 this.editedItem.user_id =
                 axios.patch(API_AUTH+'update', this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                     .then(res => {
-                         console.log(res);
+                     .then(() => {
                          this.getUsers();
+
+                         this.$notify({
+                                          title: 'Success',
+                                          text: 'Success Update User',
+                                          type: 'success',
+                                          duration: 3000,
+                                          speed: 2000,
+                                      });
                      });
             } else {
                 axios.post(API_AUTH+'register', this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-                     .then(res => {
-                         console.log(res);
+                     .then(() => {
                          this.getUsers();
+
+                         this.$notify({
+                                          title: 'Success',
+                                          text: 'Success Add User',
+                                          type: 'success',
+                                          duration: 3000,
+                                          speed: 2000,
+                                      });
                      });
             }
             this.close();

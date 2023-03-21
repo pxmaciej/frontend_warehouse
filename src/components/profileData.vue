@@ -58,7 +58,7 @@ export default {
         }
     },
     
-    mounted() {
+    created() {
         axios.get(API_AUTH+'profile',{headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
              .then(res => {
                  this.name = res.data.name;

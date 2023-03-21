@@ -97,11 +97,12 @@ export default {
             axios.delete(API_ORDER_LIST+'destroy/'+item.id,{headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
                  .then(() => {
                      this.$emit('submit');
+                     
                      this.$notify({
                                       title: 'Notification',
                                       text: 'Success delete Item',
                                       type: 'success',
-                                      duration: 5000,
+                                      duration: 3000,
                                       speed: 2000,
                                   });
                  });

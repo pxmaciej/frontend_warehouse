@@ -14,19 +14,24 @@
                 :headers="headers"
                 :items="products"
                 :search="search"
-                class="elevation-1"
                 show-select
                 :single-select=true
         >
+            <template v-slot:item.categories="{ item }">
+                <v-chip v-for="(category, index) in item.categories" :key="index" color="primary">{{ category.name }}</v-chip>
+            </template>
+            
             <template v-slot:top>
                 <v-toolbar flat color="white">
-                    <v-toolbar-title>List Products:</v-toolbar-title>
+                    <v-toolbar-title>Lista Produktów:</v-toolbar-title>
                     <v-divider
                             class="mx-4"
                             inset
                             vertical
                     ></v-divider>
+                    
                     <v-spacer></v-spacer>
+                    
                     <v-dialog v-model="dialog" max-width="500px">
                         <template v-slot:activator="{ on, attrs }">
                             <v-btn
@@ -52,28 +57,40 @@
                                 <v-container>
                                     <v-row>
                                         <v-col cols="12" sm="6" md="4">
-                                            <v-text-field v-model="editedItem.name" label="Product name"></v-text-field>
+                                            <v-text-field v-model="editedItem.name" label="Nazwa"></v-text-field>
                                         </v-col>
                                         <v-col cols="12" sm="6" md="4">
                                             <v-select
                                                     v-model="editedItem.categories"
-                                                    :hint="`${categories.name}`"
                                                     :items="categories"
                                                     item-text="name"
                                                     item-value="id"
-                                                    label="Select Category"
-                                                    persistent-hint
-                                                    single-line
+                                                    label="Kategorie"
+                                                    multiple
                                             ></v-select>
                                         </v-col>
                                         <v-col cols="12" sm="6" md="4">
-                                            <v-text-field v-model="editedItem.company" label="Company"></v-text-field>
+                                            <v-text-field v-model="editedItem.company" label="Firma"></v-text-field>
                                         </v-col>
                                         <v-col cols="12" sm="6" md="4">
-                                            <v-text-field v-model="editedItem.amount" type="number" label="Amount"></v-text-field>
+                                            <v-text-field v-model="editedItem.amount" type="number" label="Ilość"></v-text-field>
+                                        </v-col>
+                                    </v-row>
+                                    <v-row>
+                                        <v-col cols="12" sm="6" md="4">
+                                            <v-text-field v-model="editedItem.netto" @input="calculateBrutto" type="number" label="Netto"></v-text-field>
                                         </v-col>
                                         <v-col cols="12" sm="6" md="4">
-                                            <v-text-field v-model="editedItem.price" type="number" label="Price"></v-text-field>
+                                            <v-select
+                                                    v-model="editedItem.vat"
+                                                    @change="calculateBrutto"
+                                                    :items="['23', '8', '5', '0', 'zw']"
+                                                    item-value="VAT"
+                                                    label="VAT"
+                                            ></v-select>
+                                        </v-col>
+                                        <v-col cols="12" sm="6" md="4">
+                                            <v-text-field v-model="editedItem.brutto" type="number" label="Brutto"></v-text-field>
                                         </v-col>
                                     </v-row>
                                 </v-container>
@@ -86,6 +103,7 @@
                             </v-card-actions>
                         </v-card>
                     </v-dialog>
+                    
                 </v-toolbar>
             </template>
             <template v-slot:item.actions="{ item }">
@@ -122,16 +140,18 @@ export default {
         search: '',
         headers: [
             {
-                text: 'Name',
+                text: 'Nazwa',
                 align: 'start',
                 value: 'name',
             },
             { text: 'id', value: 'id' },
-            { text: 'Company', value: 'company' },
-            { text: 'Category', value: 'categories[0].name' },
-            { text: 'Amount', value: 'amount' },
-            { text: 'Price', value: 'price' },
-            { text: 'Actions', value: 'actions', sortable: false },
+            { text: 'Firma', value: 'company' },
+            { text: 'Kategorie', value: 'categories' },
+            { text: 'Ilość', value: 'amount' },
+            { text: 'Netto', value: 'netto' },
+            { text: 'VAT', value: 'vat' },
+            { text: 'Brutto', value: 'brutto' },
+            { text: 'Opcje', value: 'actions', sortable: false },
         ],
         selected: [],
         editedIndex: -1,
@@ -140,26 +160,32 @@ export default {
             categories: [],
             company: '',
             amount: 0,
-            price: 0,
+            netto: 0,
+            vat: 0,
+            brutto: 0,
         },
         defaultItem: {
             name: '',
             categories: [],
             company: '',
             amount: 0,
-            price: 0,
+            netto: 0,
+            vat: 0,
+            brutto: 0,
         },
         statisticItem: {
             name: '',
             product_id: 0,
             amount: 0,
-            price: 0,
+            netto: 0,
+            vat: 0,
+            brutto: 0,
         },
     }),
 
     computed: {
         formTitle () {
-            return this.editedIndex === -1 ? 'New Product' : 'Edit Product';
+            return this.editedIndex === -1 ? 'Nowy Produkt' : 'Edytuj Produkt';
         },
     },
 
@@ -169,6 +195,17 @@ export default {
         },
     },
     methods: {
+        calculateBrutto() {
+            if (this.editedItem.vat === 'zw') {
+                this.editedItem.brutto = this.editedItem.netto;
+            } else {
+                const netto = parseFloat(this.editedItem.netto);
+                const vat = parseFloat(this.editedItem.vat);
+                const brutto = netto * (1 + vat / 100);
+                this.editedItem.brutto = brutto.toFixed(2);
+            }
+        },
+        
         showProduct(selected) {
             if (selected.length !== 0) {
                 this.$router.push({name: 'product/show', params: { product: selected }})
@@ -178,23 +215,27 @@ export default {
         editItem (item) {
             this.editedIndex = this.products.indexOf(item);
             this.editedItem = Object.assign({}, item);
+            
             this.statisticItem.name = 'Edited product';
             this.statisticItem.product_id = this.editedItem.id;
-            this.statisticItem.amount = item.amount;
-            this.statisticItem.price = this.editedItem.price;
+            this.statisticItem.amount = this.editedItem.amount;
+            this.statisticItem.netto = this.editedItem.netto;
+            this.statisticItem.vat = this.editedItem.vat;
+            this.statisticItem.brutto = this.editedItem.brutto;
+            
             this.dialog = true;
         },
 
         deleteItem (item) {
             const index = this.products.indexOf(item);
-            confirm('Are you sure you want to delete this item?') && this.products.splice(index, 1);
+            confirm('Jesteś pewny, że chcesz usunąć wybrany produkt?') && this.products.splice(index, 1);
             axios.delete(API_PRODUCT+'destroy/'+item.id,{headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
                  .then(() => {
                      this.$emit('submit');
 
                      this.$notify({
-                                      title: 'Success',
-                                      text: 'Success Delete Product',
+                                      title: 'Sukces',
+                                      text: 'Udało się usunąć Produkt',
                                       type: 'success',
                                       duration: 3000,
                                       speed: 2000,
@@ -217,8 +258,8 @@ export default {
                          this.$emit('submit');
 
                          this.$notify({
-                                          title: 'Success',
-                                          text: 'Success Update Product',
+                                          title: 'Sukces',
+                                          text: 'Udało się edytować Produkt',
                                           type: 'success',
                                           duration: 3000,
                                           speed: 2000,
@@ -235,8 +276,8 @@ export default {
                          this.$emit('submit');
                          
                          this.$notify({
-                                          title: 'Success',
-                                          text: 'Success Add Product',
+                                          title: 'Sukces',
+                                          text: 'Udało się dodać Produkt',
                                           type: 'success',
                                           duration: 3000,
                                           speed: 2000,

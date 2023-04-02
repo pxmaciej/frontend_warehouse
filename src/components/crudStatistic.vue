@@ -1,9 +1,19 @@
 <template>
+    <v-card>
+        <v-card-title>
+            <v-text-field
+                    v-model="search"
+                    append-icon="mdi-magnify"
+                    label="Search"
+                    single-line
+                    hide-details
+            ></v-text-field>
+        </v-card-title>
     <v-data-table
             :headers="headers"
             :items="statistics"
-            sort-by="category"
-            class="elevation-1"
+            :search="search"
+            sort-by="created_at"
     >
         <template
                 v-for="header in headers.filter((header) =>
@@ -14,7 +24,7 @@
         
         <template v-slot:top>
             <v-toolbar flat color="white">
-                <v-toolbar-title>List Statistics:</v-toolbar-title>
+                <v-toolbar-title>Lista Statystyk:</v-toolbar-title>
                 <v-divider
                         class="mx-4"
                         inset
@@ -49,16 +59,30 @@
                                                 :items="products"
                                                 item-text="name"
                                                 item-value="id"
-                                                label="Select Porduct"
+                                                label="Wybierz Produkt"
                                                 persistent-hint
                                                 single-line
                                         ></v-select>
                                     </v-col>
                                     <v-col cols="12" sm="6" md="4">
-                                        <v-text-field v-model="editedItem.amount" label="Amount"></v-text-field>
+                                        <v-text-field v-model="editedItem.amount" label="Ilość"></v-text-field>
+                                    </v-col>
+                                </v-row>
+                                <v-row>
+                                    <v-col cols="12" sm="6" md="4">
+                                        <v-text-field v-model="editedItem.netto" @input="calculateBrutto" type="number" label="Netto"></v-text-field>
                                     </v-col>
                                     <v-col cols="12" sm="6" md="4">
-                                        <v-text-field v-model="editedItem.price" label="Price"></v-text-field>
+                                        <v-select
+                                                v-model="editedItem.vat"
+                                                @change="calculateBrutto"
+                                                :items="['23', '8', '5', '0', 'zw']"
+                                                item-value="VAT"
+                                                label="VAT"
+                                        ></v-select>
+                                    </v-col>
+                                    <v-col cols="12" sm="6" md="4">
+                                        <v-text-field v-model="editedItem.brutto" type="number" label="Brutto"></v-text-field>
                                     </v-col>
                                 </v-row>
                             </v-container>
@@ -89,6 +113,7 @@
             </v-icon>
         </template>
     </v-data-table>
+    </v-card>
 </template>
 
 <script>
@@ -103,37 +128,44 @@ export default {
     props: ['statistics', 'products'],
     data: () => ({
         dialog: false,
+        search: '',
         headers: [
             {
-                text: 'Name',
+                text: 'Nazwa',
                 align: 'start',
                 value: 'name',
             },
-            { text: 'Product', value: 'product_name' },
-            { text: 'Amount', value: 'amount' },
-            { text: 'Price', value: 'price' },
-            { text: 'Created', value: 'created_at', formatter: (x) => (x ? moment(x).format("DD-MM-YYYY HH:MM") : null)},
-            { text: 'Updated', value: 'updated_at', formatter: (x) => (x ? moment(x).format("DD-MM-YYYY HH:MM") : null)},
-            { text: 'Actions', value: 'actions', sortable: false },
+            { text: 'Produkt', value: 'product_name' },
+            { text: 'Ilość', value: 'amount' },
+            { text: 'Netto', value: 'netto' },
+            { text: 'VAT', value: 'vat' },
+            { text: 'Brutto', value: 'brutto' },
+            { text: 'Utworzenie', value: 'created_at', formatter: (x) => (x ? moment(x).format("DD-MM-YYYY HH:MM") : null)},
+            { text: 'Edytowano', value: 'updated_at', formatter: (x) => (x ? moment(x).format("DD-MM-YYYY HH:MM") : null)},
+            { text: 'Opcje', value: 'actions', sortable: false },
         ],
         editedIndex: -1,
         editedItem: {
             name: '',
             product_id: 0,
             amount: 0,
-            price: 0,
+            netto: 0,
+            vat: 0,
+            brutto: 0
         },
         defaultItem: {
             name: '',
             product_id: 0,
             amount: 0,
-            price: 0,
+            netto: 0,
+            vat: 0,
+            brutto: 0
         },
     }),
 
     computed: {
         formTitle () {
-            return this.editedIndex === -1 ? 'New Statistic' : 'Edit Statistic';
+            return this.editedIndex === -1 ? 'Nowa Statystyka' : 'Edytuj Statystykę';
         },
     },
 
@@ -143,6 +175,17 @@ export default {
         },
     },
     methods: {
+        calculateBrutto() {
+            if (this.editedItem.vat === 'zw') {
+                this.editedItem.brutto = this.editedItem.netto;
+            } else {
+                const netto = parseFloat(this.editedItem.netto);
+                const vat = parseFloat(this.editedItem.vat);
+                const brutto = netto * (1 + vat / 100);
+                this.editedItem.brutto = brutto.toFixed(2);
+            }
+        },
+        
         formatDate(value) {
             return moment(String(value)).format('MM/DD/YYYY hh:mm')
         },
@@ -155,14 +198,14 @@ export default {
 
         deleteItem (item) {
             const index = this.statistics.indexOf(item);
-            confirm('Are you sure you want to delete this item?') && this.statistics.splice(index, 1);
+            confirm('Jesteś pewny, że chcesz usunąć wybrany statystykę?') && this.statistics.splice(index, 1);
             axios.delete(API_STATISTICS+'destroy/'+item.id, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
                  .then(() => {
                      this.$emit('submit');
 
                      this.$notify({
-                                      title: 'Success',
-                                      text: 'Success Delete Statistic',
+                                      title: 'Sukces',
+                                      text: 'Udało się usunąć Statystykę',
                                       type: 'success',
                                       duration: 3000,
                                       speed: 2000,
@@ -185,8 +228,8 @@ export default {
                          this.$emit('submit');
 
                          this.$notify({
-                                          title: 'Success',
-                                          text: 'Success Update Statistic',
+                                          title: 'Sukces',
+                                          text: 'Udało się edytować Statystykę',
                                           type: 'success',
                                           duration: 3000,
                                           speed: 2000,
@@ -198,8 +241,8 @@ export default {
                          this.$emit('submit');
 
                          this.$notify({
-                                          title: 'Success',
-                                          text: 'Success Add Statistic',
+                                          title: 'Sukces',
+                                          text: 'Udało się dodać Statystykę',
                                           type: 'success',
                                           duration: 3000,
                                           speed: 2000,

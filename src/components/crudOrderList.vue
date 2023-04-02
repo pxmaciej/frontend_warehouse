@@ -55,31 +55,18 @@ export default {
         search: '',
         headers: [
             {
-                text: 'Your Order',
+                text: 'Nazwa',
                 align: 'start',
                 sortable: false,
                 value: 'name',
             },
-            { text: 'Amount', value: 'amount'},
-            { text: 'Price', value: 'price' },
+            { text: 'Ilość', value: 'amount'},
+            { text: 'Netto', value: 'netto' },
+            { text: 'Vat', value: 'vat' },
+            { text: 'brutto', value: 'brutto' },
             { text: 'Name Buyer', value: 'nameBuyer' },
-            { text: 'Actions', value: 'actions', sortable: false },
+            { text: 'Opcje', value: 'actions', sortable: false },
         ],
-        editedIndex: -1,
-        editedItem: {
-            id: 0,
-            product_id: 0,
-            order_id: 0,
-            amount: 0,
-            price: 0
-        },
-        defaultItem: {
-            id: 0,
-            product_id: 0,
-            order_id: 0,
-            amount: 0,
-            price: 0
-        },
         product: {
             id: 0,
             amount: 0,
@@ -88,7 +75,9 @@ export default {
             name: '',
             product_id: 0,
             amount: 0,
-            price: 0,
+            netto: 0,
+            vat: 0,
+            brutto: 0
         },
     }),
 
@@ -99,8 +88,8 @@ export default {
                      this.$emit('submit');
                      
                      this.$notify({
-                                      title: 'Notification',
-                                      text: 'Success delete Item',
+                                      title: 'Sukces',
+                                      text: 'Udało się usunąć produkt z zamówienia',
                                       type: 'success',
                                       duration: 3000,
                                       speed: 2000,
@@ -108,7 +97,6 @@ export default {
                  });
             
             this.product.id = item.product_id;
-            
             this.product.amount = item.amount + this.products.find(product => product.id === this.product.id).amount;
             
             axios.patch(API_PRODUCT + 'update/'+this.product.id, this.product, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
@@ -116,7 +104,9 @@ export default {
             this.statisticItem.name = 'Order delete product';
             this.statisticItem.product_id = this.product.id;
             this.statisticItem.amount = item.amount;
-            this.statisticItem.price = this.product.price;
+            this.statisticItem.netto = item.netto;
+            this.statisticItem.vat = item.vat;
+            this.statisticItem.brutto = item.brutto;
             
             axios.post(API_STATISTICS+'store', this.statisticItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}});
          

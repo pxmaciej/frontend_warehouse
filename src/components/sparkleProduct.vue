@@ -1,16 +1,21 @@
 <template>
   <v-card>
       <v-card-title>Wykres Produktów</v-card-title>
+      <v-card-text>
+          <v-sheet color="rgba(0, 0, 0, .12)">
           <v-sparkline
                   :type="type"
+                  :smooth="3"
+                  :height="50"
                   :value="valueSet"
                   :labels="labelSet"
+                  :label-size="5"
+                  :gradient="['#00c6ff', '#F0F', '#FF0']"
                   :auto-line-width="true"
-                  :padding="1"
-                  :smooth="2"
-                  :gradient="['red', 'orange', 'yellow']"
-                  :show-labels="true"
+                  auto-draw
           ></v-sparkline>
+          </v-sheet>
+      </v-card-text>
   </v-card>
 </template>
 
@@ -20,27 +25,17 @@ export default {
     props: ['products'],
 
     data: () => ({
-        type: 'bar',
         data: [],
+        type: "bar"
     }),
     computed: {
         valueSet() {
             return this.products.map(product => product.amount);
         },
         labelSet() {
-            return this.products.map(product => product.name + ' ' + product.amount);
+            return this.products.map(product => product.name + ': ' + product.amount);
         }
         
-    },
-    methods: {
-        getRandomColor() {
-            const letters = '0123456789ABCDEF';
-            let color = '#';
-            for (let i = 0; i < 6; i++) {
-                color += letters[Math.floor(Math.random() * 16)];
-            }
-            return color;
-        },
-    },
+    }
 }
 </script>

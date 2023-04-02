@@ -57,6 +57,11 @@
                 <crudStatistic v-if="role === 'admin'" :statistics="statistics" :products="products" @submit="getData"></crudStatistic>
             </div>
         </div>
+        <div class="row">
+            <div class="col-12">
+                <crudLog v-if="role === 'admin'" :logs="logs"></crudLog>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -71,6 +76,7 @@ import sparkleProduct from "./components/sparkleProduct";
 import limitAlert from "./components/limitAlert";
 import crudUser from "@/components/crudUser";
 import AuthService from '@/services/AuthService'
+import crudLog from "@/components/crudLog";
 import axios from 'axios'
 
 const API_PRODUCT = 'http://127.0.0.1:8000/api/products/index';
@@ -78,11 +84,13 @@ const API_ORDER = 'http://127.0.0.1:8000/api/orders/index';
 const API_ALERT = 'http://127.0.0.1:8000/api/alerts/index';
 const API_CATEGORY = 'http://127.0.0.1:8000/api/categories/index';
 const API_STATISTICS = 'http://127.0.0.1:8000/api/statistics/index';
+const API_LOGS = 'http://127.0.0.1:8000/api/auth/log';
 
 export default {
     name: 'Dashboard',
     
     components:{
+        crudLog,
         sparkleProduct,
         crudProduct,
         measureProduct,
@@ -101,11 +109,9 @@ export default {
             orders: [],
             alerts: [],
             statistics: [],
-            role: ""
+            role: "",
+            logs: []
         }
-    },
-    
-    computed: {
     },
     
     created: async function() {
@@ -135,6 +141,11 @@ export default {
                  .then(res => {
                      this.statistics = res.data;
                  });
+            
+            axios.get(API_LOGS,{headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+                 .then(res => {
+                     this.logs = res.data;
+                 });
         }
     },
 
@@ -161,6 +172,11 @@ export default {
             axios.get(API_STATISTICS, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
                  .then(res => {
                      this.statistics = res.data;
+                 });
+            
+            axios.get(API_LOGS,{headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
+                 .then(res => {
+                     this.logs = res.data;
                  });
         },
         

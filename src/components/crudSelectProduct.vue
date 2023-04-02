@@ -9,25 +9,31 @@
                     hide-details
             ></v-text-field>
         </v-card-title>
+        
         <v-data-table
                 v-model="selected"
                 :headers="headers"
                 :items="products"
                 :search="search"
                 show-select
-                sort-by="category"
-                class="elevation-1"
+                sort-by="name"
                 :single-select=true
         >
+            <template v-slot:item.categories="{ item }">
+                <v-chip v-for="(category, index) in item.categories" :key="index" color="primary">{{ category.name }}</v-chip>
+            </template>
+            
             <template v-slot:top>
                 <v-toolbar flat color="white">
-                    <v-toolbar-title>List Products:</v-toolbar-title>
+                    <v-toolbar-title>Lista Produktów:</v-toolbar-title>
                     <v-divider
                             class="mx-4"
                             inset
                             vertical
                     ></v-divider>
+                    
                     <v-spacer></v-spacer>
+                    
                     <v-dialog v-model="dialog" max-width="500px">
                         <template v-slot:activator="{ on, attrs }">
                             <v-btn
@@ -80,34 +86,42 @@ export default {
         search: '',
         headers: [
             {
-                text: 'Name',
+                text: 'Nazwa',
                 align: 'start',
                 sortable: false,
                 value: 'name',
             },
             { text: 'id', value: 'id' },
-            { text: 'Category', value: 'categories' },
-            { text: 'Company', value: 'company' },
-            { text: 'Amount', value: 'amount' },
-            { text: 'Price', value: 'price' },
+            { text: 'Kategorie', value: 'categories' },
+            { text: 'Firma', value: 'company' },
+            { text: 'Ilość', value: 'amount' },
+            { text: 'Netto', value: 'netto' },
+            { text: 'VAT', value: 'vat' },
+            { text: 'Brutto', value: 'brutto' }
         ],
         statisticItem: {
             name: '',
             product_id: 0,
             amount: 0,
-            price: 0,
+            netto: 0,
+            vat: 0,
+            brutto: 0
         },
         editedItem: {
             product_id: 0,
             order_id: 0,
             amount: 0,
-            price: 0,
+            netto: 0,
+            vat: 0,
+            brutto: 0
         },
         defaultItem: {
             product_id: 0,
             order_id:0,
             amount: 0,
-            price: 0,
+            netto: 0,
+            vat: 0,
+            brutto: 0
         },
         product: {
             id: 0,
@@ -131,16 +145,26 @@ export default {
             this.product.id = this.selected['0'].id;
             this.editedItem.order_id = this.order['0'].id;
             this.editedItem.product_id = this.selected['0'].id;
-            this.editedItem.price = this.selected['0'].price * this.editedItem.amount;
+            this.editedItem.netto = this.selected['0'].netto * this.editedItem.amount;
+            this.editedItem.vat = this.selected['0'].vat;
 
+            if (this.editedItem.vat === 'zw') {
+                this.editedItem.brutto = this.editedItem.netto;
+            } else {
+                const netto = parseFloat(this.editedItem.netto);
+                const vat = parseFloat(this.editedItem.vat);
+                const brutto = netto * (1 + vat / 100);
+                this.editedItem.brutto = brutto.toFixed(2);
+            }
+            
             if (this.selected['0'].amount >= this.editedItem.amount) {
                 axios.post(API_ORDER_LIST + 'store', this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
                      .then(() => {
                          this.$emit('submit');
 
                          this.$notify({
-                                          title: 'Success',
-                                          text: 'Success Add Product To Order',
+                                          title: 'Sukces',
+                                          text: 'Udało się dodać Produkt do Zamówienia',
                                           type: 'success',
                                           duration: 3000,
                                           speed: 2000,
@@ -154,15 +178,17 @@ export default {
                 this.statisticItem.name = 'Order product';
                 this.statisticItem.product_id = this.product.id;
                 this.statisticItem.amount = this.product.amount;
-                this.statisticItem.price = this.selected['0'].price;
+                this.statisticItem.netto = this.selected['0'].netto;
+                this.statisticItem.vat = this.selected['0'].vat;
+                this.statisticItem.brutto = this.selected['0'].brutto;
                 
                 axios.post(API_STATISTICS+'store', this.statisticItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}});
                 
                 this.close();
             } else {
                 this.$notify({
-                                 title: 'Error',
-                                 text: 'Amount in order is greater then product amount',
+                                 title: 'Błąd',
+                                 text: 'Ilość w zamówieniu jest większa niż ilość dostępnego produktu',
                                  type: 'error',
                                  duration: 5000,
                                  speed: 2000,

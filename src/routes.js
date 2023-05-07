@@ -9,35 +9,35 @@ import Profile from "./Profile";
 export const routes = [
 
     {
-        path : '/',
+        path: '/',
         component: Dashboard,
     },
     {
-        path : '/login',
+        path: '/login',
         component: Login,
     },
     {
-        path : '/dashboard',
+        path: '/dashboard',
         component: Dashboard,
     },
     {
-        path : '/profile',
+        path: '/profile',
         component: Profile,
     },
     {
-        path : '/orderList/:order',
+        path: '/orderList/:order',
         name: 'orderList',
         component: OrderList,
         props: true
     },
     {
-        path : '/product/show/:product',
+        path: '/statistic/show/',
         name: 'product/show',
         component: Product,
         props: true
     },
     {
-        path : '/contact',
+        path: '/contact',
         component: ContactForm,
     }
 

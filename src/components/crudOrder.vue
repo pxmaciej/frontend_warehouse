@@ -28,7 +28,7 @@
             vertical
           ></v-divider>
           <v-spacer></v-spacer>
-          <v-dialog v-model="dialog" max-width="800px">
+          <v-dialog v-model="dialog" max-width="1000px">
             <template v-slot:activator="{ on, attrs }">
               <v-btn
                 color="primary"
@@ -74,21 +74,23 @@
                       ></v-checkbox>
                     </v-col>
                   </v-row>
-                  <v-row>
-                    <div class="subheading">
-                      Data zamówienia
-                    </div>
-                    <v-date-picker
-                      v-model="editedItem.dateOrder"
-                      color="green lighten-1"
-                    ></v-date-picker>
-                    <div class="subheading">
-                      Data dostawy
-                    </div>
-                    <v-date-picker
-                      v-model="editedItem.dateDeliver"
-                      color="green lighten-1"
-                    ></v-date-picker>
+                  <v-row justify="space-around">
+                    <v-col cols="12" sm="6" md="4">
+                      <h3>Data Zamówienia</h3>
+                      <v-date-picker
+                        v-model="editedItem.dateOrder"
+                        color="green lighten-1"
+                        locale="pl"
+                      ></v-date-picker>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                      <h3>Data Dostawy</h3>
+                      <v-date-picker
+                        v-model="editedItem.dateDeliver"
+                        color="green lighten-1"
+                        locale="pl"
+                      ></v-date-picker>
+                    </v-col>
                   </v-row>
                 </v-container>
               </v-card-text>

@@ -138,7 +138,7 @@ export default {
       confirm(this.$root.NOTIFICATION_TEXT_CONFIRMATION) && this.categories.splice(index, 1);
       
       axios.delete(
-        this.$root.API_CATEGORIES + 'destroy/' + item.id,
+        this.$root.API_CATEGORY + 'destroy/' + item.id,
         {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
       ).then(() => {
         this.$emit('submit');
@@ -177,7 +177,7 @@ export default {
     save() {
       if (this.editedIndex > -1) {
         axios.patch(
-          this.$root.API_CATEGORIES + 'update/' + this.editedItem.id,
+          this.$root.API_CATEGORY + 'update/' + this.editedItem.id,
           this.editedItem,
           {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
         ).then(() => {
@@ -205,7 +205,7 @@ export default {
         });
       } else {
         axios.post(
-          this.$root.API_CATEGORIES + 'store',
+          this.$root.API_CATEGORY + 'store',
           this.editedItem,
           {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
         ).then(() => {

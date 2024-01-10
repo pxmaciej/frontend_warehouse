@@ -14,6 +14,7 @@
       :items="statistics"
       :search="search"
       sort-by="created_at"
+      
     >
       <template
         v-for="header in headers.filter((header) =>

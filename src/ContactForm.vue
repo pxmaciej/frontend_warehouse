@@ -37,10 +37,10 @@
           required
         ></v-textarea>
         
-        <vue-recaptcha sitekey="6LcT39MjAAAAAChqO4bbh2qTW1Ica_9X2-4IowBp"></vue-recaptcha>
+        <vue-recaptcha sitekey="6LfcJQsmAAAAADftX-xklO9Xqx-wFUeqwRmDSE1m"></vue-recaptcha>
         
         <v-btn
-          :disabled="!valid"
+          :disabled="!valid || !editedItem.name || !editedItem.email || !editedItem.message"
           color="success"
           class="mr-4"
           @click="sendEmail"

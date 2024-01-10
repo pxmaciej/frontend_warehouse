@@ -61,6 +61,12 @@
           </v-list-item-icon>
           <v-list-item-title>Profil</v-list-item-title>
         </v-list-item>
+        <v-list-item v-if="user.role === 'admin'"  link to="/statistic">
+          <v-list-item-icon>
+            <v-icon>mdi-poll</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>Statystyki</v-list-item-title>
+        </v-list-item>
         <v-list-item @click="logout">
           <v-list-item-icon>
             <v-icon>mdi-logout-variant</v-icon>
@@ -82,9 +88,6 @@
     </v-footer>
   </v-app>
 </template>
-
-<style>
-</style>
 
 <script>
 import axios from "axios";

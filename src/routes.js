@@ -1,7 +1,7 @@
 import Dashboard from './Dashboard'
 import Login from './Login'
 import OrderList from "./OrderList";
-import Product from "./Product";
+import Statistic from "./Statistic";
 import ContactForm from "./ContactForm";
 import Profile from "./Profile";
 
@@ -31,9 +31,9 @@ export const routes = [
         props: true
     },
     {
-        path: '/statistic/show/',
-        name: 'product/show',
-        component: Product,
+        path: '/statistic',
+        name: 'statistic',
+        component: Statistic,
         props: true
     },
     {

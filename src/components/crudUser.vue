@@ -211,18 +211,14 @@ export default {
       v => validatePhoneNumber(v) || 'Niepoprawny numer telefonu.'
     ],
     passwordRules: [
-      v => !!v || 'Hasło jest wymagane.'
+      v => !!v || 'Hasło jest wymagane.',
+      v => (v && v.length >= 6) || 'Hasło powinno mieć 6 znaków.',
     ],
     
   }),
   
-  created() {
-    axios.get(
-      this.$root.API_AUTH + 'users',
-      {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
-    ).then(res => {
-      this.users = res.data;
-    });
+  created: async function ()  {
+    this.getUsers();
   },
   
   computed: {
@@ -241,6 +237,15 @@ export default {
     },
   },
   methods: {
+    getUsers() {
+      axios.get(
+        this.$root.API_AUTH + 'users',
+        {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
+      ).then(res => {
+        this.users = res.data;
+      });
+    },
+
     formatDate(value) {
       return moment(String(value)).format('MM/DD/YYYY hh:mm')
     },

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <notifications position="bottom right" reverse/>
+     <notifications position="bottom right" reverse/>
     <div class="row">
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
@@ -40,30 +40,20 @@
         <crudAlert
           :alerts="alerts"
           :products="products"
-          @submit="getAlerts"
+          @submit="getAlert"
         ></crudAlert>
       </div>
       <div class="col-6">
         <limitAlert
           :alerts="alerts"
           :products="products"
-          @submit="getAlerts"
+          @submit="getAlert"
         ></limitAlert>
       </div>
     </div>
     <div class="row">
       <div class="col-12">
         <crudUser v-if="role === 'admin'"></crudUser>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-12">
-        <crudStatistic
-          v-if="role === 'admin'"
-          :products="products"
-          :statistics="statistics"
-          @submit="getStatistic"
-        ></crudStatistic>
       </div>
     </div>
     <div class="row">
@@ -79,7 +69,6 @@ import crudProduct from './components/crudProduct.vue'
 import crudOrder from "./components/crudOrder"
 import crudAlert from "./components/crudAlert";
 import crudCategory from "./components/crudCategory";
-import crudStatistic from "./components/crudStatistic";
 import limitAlert from "./components/limitAlert";
 import crudUser from "@/components/crudUser";
 import AuthService from '@/services/AuthService'
@@ -95,7 +84,6 @@ export default {
     crudOrder,
     crudAlert,
     crudCategory,
-    crudStatistic,
     limitAlert,
     crudUser,
   },
@@ -114,13 +102,10 @@ export default {
   
   created: async function () {
     if (await AuthService.isAuthenticated(this)) {
-      this.role = this.$store.state.role;
-      this.getProduct();
+      this.getProductByRole();
       this.getCategory();
       this.getOrder();
-      this.getAlerts();
-      this.getStatistic();
-      this.getLog();
+      this.getAlert();
     }
   },
   
@@ -144,34 +129,24 @@ export default {
     },
     
     getCategory() {
-      axios.get(
-        this.$root.API_CATEGORY + 'index',
-        {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
-      ).then(res => {
-        this.categories = res.data;
-      });
-    },
-    
-    
-    getStatistic() {
-      axios.get(
-        this.$root.API_STATISTIC + 'index',
-        {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
-      ).then(res => {
-        this.statistics = res.data;
-      });
-    },
+     axios.get(
+       this.$root.API_CATEGORY + 'index',
+       {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
+     ).then(res => {
+       this.categories = res.data;
+     });
+   },
     
     getLog() {
       axios.get(
-        this.$root.API_LOGS,
+        this.$root.API_LOG,
         {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
       ).then(res => {
         this.logs = res.data;
       });
     },
     
-    getAlerts() {
+    getAlert() {
       axios.get(
         this.$root.API_ALERT + 'index',
         {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
@@ -180,18 +155,19 @@ export default {
       });
     },
     
-    getProductByRole(){
+    setRole() {
+      this.role = this.$store.state.role;
+    },
+    
+    getProductByRole() {
+      this.setRole()
       if (this.role === 'admin') {
         this.getProduct();
-        this.getStatistic();
         this.getLog();
-      }else {
+      } else {
         this.getProduct();
       }
     }
   }
 }
 </script>
-
-<style>
-</style>

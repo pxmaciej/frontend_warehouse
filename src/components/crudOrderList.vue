@@ -65,15 +65,7 @@ export default {
     product: {
       id: 0,
       amount: 0,
-    },
-    statisticItem: {
-      name: '',
-      product_id: 0,
-      amount: 0,
-      netto: 0,
-      vat: 0,
-      brutto: 0
-    },
+    }
   }),
   
   methods: {
@@ -114,19 +106,6 @@ export default {
         this.product,
         {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
       )
-      
-      this.statisticItem.name = 'Order delete product';
-      this.statisticItem.product_id = this.product.id;
-      this.statisticItem.amount = item.amount;
-      this.statisticItem.netto = item.netto;
-      this.statisticItem.vat = item.vat;
-      this.statisticItem.brutto = item.brutto;
-      
-      axios.post(
-        this.$root.API_STATISTICS + 'store',
-        this.statisticItem,
-        {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
-      );
     }
   }
 }

@@ -58,13 +58,21 @@
                       <v-select
                         v-model="editedItem.product_id"
                         :hint="`${products.name}`"
-                        :items="products"
+                        :items="filteredProducts"
                         item-text="name"
                         item-value="id"
                         label="Wybierz produkt"
-                        persistent-hint
                         single-line
-                      ></v-select>
+                      >
+                        <template v-slot:prepend-item>
+                          <v-list-item>
+                            <v-list-item-content>
+                              <v-text-field v-model="selectedProduct" placeholder="Wyszukaj" @input="searchProduct"></v-text-field>
+                            </v-list-item-content>
+                          </v-list-item>
+                          <v-divider class="mt-2"></v-divider>
+                        </template>
+                      </v-select>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -130,11 +138,16 @@ export default {
       product_id: 0,
       name: '',
     },
+    selectedProduct: ''
   }),
   
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? 'Nowy alarm' : 'Edytuj alarm';
+    },
+    filteredProducts() {
+      return this.products.filter((product) => product.name.toLowerCase().includes(this.selectedProduct.toLowerCase())
+      );
     },
   },
   
@@ -247,8 +260,12 @@ export default {
         });
       }
       this.close();
+    },
+  
+    searchProduct() {
+      this.filteredProducts = this.products.filter((product) => product.name.toLowerCase().includes(this.selectedProduct.toLowerCase())
+      );
     }
   }
 }
 </script>
-

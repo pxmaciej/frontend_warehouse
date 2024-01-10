@@ -90,19 +90,13 @@ export default {
       {text: 'id', value: 'id'},
       {text: 'Kategorie', value: 'categories'},
       {text: 'Firma', value: 'company'},
+      {text: 'Model', value: 'model'},
+      {text: 'Kod', value: 'code'},
       {text: 'Stan magazynowy', value: 'amount'},
       {text: 'Netto', value: 'netto'},
       {text: 'VAT', value: 'vat'},
       {text: 'Brutto', value: 'brutto'}
     ],
-    statisticItem: {
-      name: '',
-      product_id: 0,
-      amount: 0,
-      netto: 0,
-      vat: 0,
-      brutto: 0
-    },
     editedItem: {
       product_id: 0,
       order_id: 0,
@@ -183,23 +177,9 @@ export default {
         });
         
         this.product.amount = this.selected['0'].amount - this.editedItem.amount;
-        
         axios.patch(
           this.$root.API_PRODUCT + 'update/' + this.product.id,
           this.product, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
-        );
-        
-        this.statisticItem.name = 'Order product';
-        this.statisticItem.product_id = this.product.id;
-        this.statisticItem.amount = this.product.amount;
-        this.statisticItem.netto = this.selected['0'].netto;
-        this.statisticItem.vat = this.selected['0'].vat;
-        this.statisticItem.brutto = this.selected['0'].brutto;
-        
-        axios.post(
-          this.$root.API_STATISTICS + 'store',
-          this.statisticItem,
-          {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
         );
         
         this.close();

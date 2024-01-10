@@ -5,7 +5,7 @@
     dark
     max-width="800px"
   >
-    <v-row>
+    <v-row class="ma-0">
       <v-col
         cols="6">
         <v-img
@@ -42,6 +42,15 @@
             Zaloguj
           </v-btn>
         </form>
+        <v-alert
+          :border="'bottom'"
+          color="pink darken-1"
+          dark
+          class="mt-1"
+          v-if="loginFail"
+        >
+          Błędne dane logowania
+        </v-alert>
       </v-col>
     </v-row>
   </v-card>
@@ -56,6 +65,7 @@ export default {
       login: '',
       password: '',
     },
+    loginFail: false,
     show: false
   }),
   
@@ -74,20 +84,21 @@ export default {
   },
   methods: {
     submit() {
-      axios.post(this.$root.API_AUTH + 'login', this.user).then(res => {
+      axios.post(
+        this.$root.API_AUTH + 'login',
+        this.user
+      ).then(res => {
         this.$store.commit('setToken', res.data.access_token);
         this.$store.commit('setUserRole', res.data.user.role);
         this.$store.commit('setUserId', res.data.user.id);
         this.$store.commit('setUserData', res.data.user);
         this.$router.push('/dashboard');
-      })
-           .catch(err => {
+      }).catch(err => {
              console.log(err.data);
+             return this.loginFail = true;
+             
            });
     }
   }
 }
 </script>
-<style>
-</style>
-

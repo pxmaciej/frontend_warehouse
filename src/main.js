@@ -7,7 +7,9 @@ import VeeValidate from 'vee-validate'
 import {store} from './store'
 import SmartTable from 'vuejs-smart-table'
 import Notifications from 'vue-notification'
+import DatetimePicker from 'vuetify-datetime-picker'
 
+Vue.use(DatetimePicker)
 Vue.use(VeeValidate);
 Vue.config.productionTip = false;
 Vue.use(VueRouter);
@@ -19,7 +21,7 @@ Vue.prototype.API_ORDER = 'http://127.0.0.1:8000/api/order/';
 Vue.prototype.API_ALERT = 'http://127.0.0.1:8000/api/alert/';
 Vue.prototype.API_CATEGORY = 'http://127.0.0.1:8000/api/category/';
 Vue.prototype.API_STATISTIC = 'http://127.0.0.1:8000/api/statistic/';
-Vue.prototype.API_LOGS = 'http://127.0.0.1:8000/api/auth/log';
+Vue.prototype.API_LOG = 'http://127.0.0.1:8000/api/auth/log';
 Vue.prototype.API_AUTH = 'http://127.0.0.1:8000/api/auth/';
 Vue.prototype.API_ORDER_LIST = 'http://127.0.0.1:8000/api/orderlist/';
 

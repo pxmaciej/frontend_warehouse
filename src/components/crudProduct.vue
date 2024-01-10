@@ -67,10 +67,25 @@
                     <v-col cols="12" md="4" sm="6">
                       <v-text-field v-model="editedItem.company" label="Firma"></v-text-field>
                     </v-col>
+                  </v-row>
+                  <v-row>
                     <v-col cols="12" md="4" sm="6">
                       <v-text-field
                         v-model="editedItem.amount"
                         label="Stan magazynowy"
+                        type="number"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="4" sm="6">
+                      <v-text-field
+                        v-model="editedItem.model"
+                        label="Model"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="4" sm="6">
+                      <v-text-field
+                        v-model="editedItem.code"
+                        label="Code"
                         type="number"
                       ></v-text-field>
                     </v-col>
@@ -150,6 +165,8 @@ export default {
       },
       {text: 'id', value: 'id'},
       {text: 'Firma', value: 'company'},
+      {text: 'Model', value: 'model'},
+      {text: 'Kod', value: 'code'},
       {text: 'Kategorie', value: 'categories'},
       {text: 'Stan magazynowy', value: 'amount'},
       {text: 'Netto', value: 'netto'},
@@ -166,6 +183,8 @@ export default {
       name: '',
       categories: [],
       company: '',
+      model: '',
+      code: 0,
       amount: 0,
       netto: 0,
       vat: 0,
@@ -175,14 +194,8 @@ export default {
       name: '',
       categories: [],
       company: '',
-      amount: 0,
-      netto: 0,
-      vat: 0,
-      brutto: 0,
-    },
-    statisticItem: {
-      name: '',
-      product_id: 0,
+      model: '',
+      code: 0,
       amount: 0,
       netto: 0,
       vat: 0,
@@ -227,7 +240,6 @@ export default {
     deleteItem(item) {
       const index = this.products.indexOf(item);
       confirm(this.$root.NOTIFICATION_TEXT_CONFIRMATION) && this.products.splice(index, 1);
-      
       axios.delete(
         this.$root.API_PRODUCT + 'destroy/' + item.id,
         {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
@@ -266,14 +278,13 @@ export default {
     },
     
     save() {
-      if (this.editedIndex > -1) {
+      if (this.editedIndex > -1 && this.editedItem.amount > 0) {
         axios.patch(
           this.$root.API_PRODUCT + 'update/' + this.editedItem.id,
           this.editedItem,
           {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
         ).then(() => {
           this.$emit('submit');
-          this.setStatistic();
           
           this.$notify({
                          title: 'Sukces',
@@ -296,7 +307,7 @@ export default {
                          speed: 2000,
                        });
         });
-      } else {
+      } else if (this.editedItem.amount > 0) {
         axios.post(
           this.$root.API_PRODUCT + 'store',
           this.editedItem,
@@ -325,19 +336,17 @@ export default {
                          speed: 2000,
                        });
         });
+      } else {
+        this.$notify({
+                       title: 'Błąd',
+                       text: 'Ilość nie może być mniejsza niż 0',
+                       type: 'error',
+                       duration: 3000,
+                       speed: 2000,
+                     });
       }
       this.close();
     },
-    
-    setStatistic(){
-      axios.post(
-        this.$root.API_STATISTIC + 'store',
-        this.statisticItem,
-        {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
-      ).then(() => {
-        this.$emit('submit');
-      });
-    }
   }
 }
 </script>

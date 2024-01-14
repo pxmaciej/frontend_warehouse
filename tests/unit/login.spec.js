@@ -3,7 +3,7 @@ import Login from '@/Login';
 import axios from 'axios';
 import Vue from "vue";
 
-jest.mock('axios'); // Mockowanie modułu axios
+jest.mock('axios');
 
 Vue.prototype.API_AUTH = 'http://127.0.0.1:8000/api/auth/';
 
@@ -32,7 +32,6 @@ describe('Login', () => {
     });
 
     it('should submit login form and handle successful response', async () => {
-        // Ustaw dane logowania
         wrapper.setData({
                             user: {
                                 login: 'mockUser',
@@ -40,7 +39,6 @@ describe('Login', () => {
                             },
                         });
 
-        // Mockowanie odpowiedzi z serwera
         const mockResponse = {
             data: {
                 success: true,
@@ -51,22 +49,17 @@ describe('Login', () => {
                 },
             },
         };
-        jest.spyOn(wrapper.vm.$router, 'push'); // Mockowanie metody $router.push
+        jest.spyOn(wrapper.vm.$router, 'push');
 
-        // Mockowanie metody axios.post i zwrócenie danych testowych
         axios.post.mockResolvedValue(mockResponse);
 
-
-        // Wywołanie metody submit
         await wrapper.vm.submit();
 
-        // Sprawdzenie, czy metoda axios.post została wywołana z poprawnymi danymi
         expect(axios.post).toHaveBeenCalledWith('http://127.0.0.1:8000/api/auth/' + 'login', {
             login: 'mockUser',
             password: 'mockPassword',
         });
 
-        // Sprawdzenie, czy odpowiednie metody commit zostały wywołane z odpowiednimi argumentami
         expect(mockStore.commit).toHaveBeenCalledWith('setToken', 'mockToken');
         expect(mockStore.commit).toHaveBeenCalledWith('setUserRole', 'admin');
         expect(mockStore.commit).toHaveBeenCalledWith('setUserId', 123);
@@ -75,12 +68,10 @@ describe('Login', () => {
             id: 123,
         });
 
-        // Sprawdzenie, czy nastąpiło przekierowanie na stronę /dashboard
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith('/dashboard');
     });
 
     it('should submit login form and handle error response', async () => {
-        // Ustaw dane logowania
         wrapper.setData({
                             user: {
                                 login: 'mockUser',
@@ -88,7 +79,6 @@ describe('Login', () => {
                             },
                         });
 
-        // Mockowanie błędu z serwera
         const mockError = {
             response: {
                 status: 401,
@@ -98,10 +88,8 @@ describe('Login', () => {
 
         axios.post.mockRejectedValue(mockError);
 
-        // Wywołanie metody submit
         await wrapper.vm.submit();
 
-        // Sprawdzenie, czy metoda axios.post została wywołana z poprawnymi danymi
         expect(axios.post).toHaveBeenCalledWith('http://127.0.0.1:8000/api/auth/' + 'login', {
             login: 'mockUser',
             password: 'mockPassword',

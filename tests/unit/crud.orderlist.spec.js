@@ -62,11 +62,9 @@ describe('CrudOrderList', () => {
 
   describe('deleteItem', () => {
     it('should remove the item from the orderList array and update the product amount', () => {
-      // Mock the API requests
       axios.delete.mockResolvedValue();
       axios.patch.mockResolvedValue();
-
-      // Set up the initial data
+      
       const item = {
         id: 1,
         name: 'Product 1',
@@ -80,10 +78,8 @@ describe('CrudOrderList', () => {
                         },
                       });
 
-      // Trigger the method
       wrapper.vm.deleteItem(item);
 
-      // Check the result
       expect(axios.delete).toHaveBeenCalledWith(
           'http://127.0.0.1:8000/api/orderlist/destroy/1',
           expect.objectContaining({
@@ -106,11 +102,9 @@ describe('CrudOrderList', () => {
     });
 
     it('should show success notification when the API requests succeed', () => {
-      // Mock the API requests
       axios.delete.mockResolvedValue();
       axios.patch.mockResolvedValue();
 
-      // Set up the initial data
       const item = {
         id: 1,
         name: 'Product 1',
@@ -118,10 +112,8 @@ describe('CrudOrderList', () => {
         product_id: 1,
       };
 
-      // Trigger the method
        wrapper.vm.deleteItem(item);
 
-      // Check the result
       expect(wrapper.vm.$notify).toHaveBeenCalledWith({
                                                         title: 'Sukces',
                                                         text: 'Item successfully removed from order',
@@ -132,12 +124,9 @@ describe('CrudOrderList', () => {
     });
 
     it('should show error notification when the API requests fail', () => {
-      // Mock the API requests
       axios.delete.mockRejectedValue();
       axios.patch.mockRejectedValue();
 
-      // Set up the initial data
-      // Set up the initial data
       const item = {
         id: 1,
         name: 'Product 1',
@@ -145,10 +134,8 @@ describe('CrudOrderList', () => {
         product_id: 1,
       };
 
-      // Trigger the method
       wrapper.vm.deleteItem(item);
 
-      // Check the result
       expect(wrapper.vm.$notify).toHaveBeenCalledWith({
                                                         title: 'Błąd',
                                                         text: 'Error occurred while removing the order',

@@ -23,7 +23,7 @@
       
       <template v-slot:top>
         <v-toolbar color="white" flat>
-          <v-toolbar-title>Magazyn Produktów:</v-toolbar-title>
+          <v-toolbar-title>Magazyn:</v-toolbar-title>
           <v-divider
             class="mx-4"
             inset

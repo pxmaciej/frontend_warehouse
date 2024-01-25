@@ -1,60 +1,64 @@
 <template>
-  <v-card
-    class="mx-auto my-12"
-    max-width="374"
-  >
-    <v-card-title>Send Email</v-card-title>
-    <v-card-text>
-      <v-form
-        ref="form"
-        v-model="valid"
-        lazy-validation
-      >
-        <v-text-field
-          v-model="editedItem.name"
-          name="name"
-          :counter="10"
-          :rules="nameRules"
-          label="Imie"
-          required
-        ></v-text-field>
-        
-        <v-text-field
-          v-model="editedItem.email"
-          :rules="emailRules"
-          name="email"
-          label="E-mail"
-          required
-        ></v-text-field>
-        <v-textarea
-          outlined
-          auto-grow
-          rows="1"
-          row-height="15"
-          v-model="editedItem.message"
-          name="message"
-          label="Wiadomość"
-          required
-        ></v-textarea>
-        
-        <vue-recaptcha sitekey="6LfcJQsmAAAAADftX-xklO9Xqx-wFUeqwRmDSE1m"></vue-recaptcha>
-        
-        <v-btn
-          :disabled="!valid || !editedItem.name || !editedItem.email || !editedItem.message"
-          color="success"
-          class="mr-4"
-          @click="sendEmail"
+  <div class="container">
+    <notifications position="bottom right" reverse/>
+    <v-card
+      class="mx-auto my-12"
+      max-width="374"
+    >
+      <v-card-title>Send Email</v-card-title>
+      <v-card-text>
+        <v-form
+          ref="form"
+          v-model="valid"
+          lazy-validation
         >
-          Submit
-        </v-btn>
-      </v-form>
-    </v-card-text>
-  </v-card>
+          <v-text-field
+            v-model="editedItem.name"
+            name="name"
+            :counter="10"
+            :rules="nameRules"
+            label="Imie"
+            required
+          ></v-text-field>
+          
+          <v-text-field
+            v-model="editedItem.email"
+            :rules="emailRules"
+            name="email"
+            label="E-mail"
+            required
+          ></v-text-field>
+          <v-textarea
+            :rules="messageRules"
+            outlined
+            auto-grow
+            rows="1"
+            row-height="15"
+            v-model="editedItem.message"
+            name="message"
+            label="Wiadomość"
+            required
+          ></v-textarea>
+          
+          <vue-recaptcha sitekey="6LfeGlkpAAAAAETnfkAePqb5DhDwZOnCBSEneOrL" @verify="noRobot"></vue-recaptcha>
+          
+          <v-btn
+            :disabled="!valid"
+            color="success"
+            class="mr-4"
+            @click="sendEmail"
+          >
+            Submit
+          </v-btn>
+        </v-form>
+      </v-card-text>
+    </v-card>
+  </div>
 </template>
 
 <script>
 import emailjs from 'emailjs-com';
-import {VueRecaptcha} from 'vue-recaptcha';
+import { VueRecaptcha } from 'vue-recaptcha';
 
 export default {
   name: "ContactForm",
@@ -65,14 +69,19 @@ export default {
   
   data() {
     return {
+      recaptcha: false,
       valid: false,
       nameRules: [
-        v => !!v || 'Name is required',
-        v => (v && v.length <= 10) || 'Name must be less than 10 characters',
+        v => !!v || 'Imie jest wymagane',
+        v => (v && v.length <= 10) || 'Dopuszczalna ilość znaków 10',
       ],
       emailRules: [
-        v => !!v || 'E-mail is required',
-        v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+        v => !!v || 'E-mail jest wymagany',
+        v => /.+@.+\..+/.test(v) || 'E-mail musi być poprawny',
+      ],
+      messageRules: [
+         v => !!v || 'Treść jest wymagana',
+         v => (v && v.length <= 150) || 'Dopuszczalna ilość znaków 150',
       ],
       editedItem: {
         name: '',
@@ -83,8 +92,11 @@ export default {
   },
   
   methods: {
+    noRobot() {
+      this.recaptcha = true;
+    },
     sendEmail() {
-      if (this.valid) {
+      if (this.valid && this.recaptcha) {
         try {
           emailjs.sendForm(
             'service_k6m8klr',
@@ -100,12 +112,7 @@ export default {
                          duration: 3000,
                          speed: 1000,
                        });
-        }
-        
-        this.name = '';
-        this.email = '';
-        this.message = '';
-        
+        }  
         this.$notify({
                        title: 'Success',
                        text: 'Success send Message',
@@ -122,6 +129,9 @@ export default {
                        speed: 1000,
                      });
       }
+      this.editedItem.name = '';
+      this.editedItem.email = '';
+      this.editedItem.message = '';
     }
   }
 }

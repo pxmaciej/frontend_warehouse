@@ -9,7 +9,7 @@ import SmartTable from 'vuejs-smart-table'
 import Notifications from 'vue-notification'
 import DatetimePicker from 'vuetify-datetime-picker'
 
-Vue.use(DatetimePicker)
+Vue.use(DatetimePicker) 
 Vue.use(VeeValidate);
 Vue.config.productionTip = false;
 Vue.use(VueRouter);

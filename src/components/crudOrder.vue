@@ -57,15 +57,34 @@
                   <v-row>
                     <v-col cols="12" sm="6" md="4">
                       <v-text-field
-                        v-model="editedItem.nameBuyer"
+                        v-model="editedItem.client"
                         label="Klient"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                      <v-text-field
+                        v-model="editedItem.zipCode"
+                        label="Kod pocztowy"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                      <v-text-field
+                        v-model="editedItem.city"
+                        label="Miasto"
                       ></v-text-field>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                       <v-textarea
                         v-model="editedItem.address"
-                        label="Adres Dostawy"
+                        label="Adres"
                       ></v-textarea>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                      <v-select
+                        label="Typ"
+                        v-model="editedItem.type"
+                        :items="['dostawa', 'wysyłka']"
+                      ></v-select>
                     </v-col>
                     <v-col cols="12" sm="6" md="4">
                       <v-checkbox
@@ -128,7 +147,7 @@ import axios from "axios";
 
 export default {
   name: 'crudOrder',
-  props: ['orders'],
+  props: ['orders', 'products'],
   data: () => ({
     dialog: false,
     search: '',
@@ -136,8 +155,7 @@ export default {
       {
         text: 'Klient',
         align: 'start',
-        sortable: false,
-        value: 'nameBuyer',
+        value: 'client',
       },
       {
         text: 'Data zamówienia',
@@ -149,8 +167,11 @@ export default {
         value: 'dateDeliver',
         dataType: "Date"
       },
+      {text: 'Kod pocztowy', value: 'zipCode'},
+      {text: 'Miasto', value: 'city'},
       {text: 'Adres', value: 'address'},
       {text: 'Status', value: 'status'},
+      {text: 'Type', value: 'type'},
       {
         text: 'Opcje',
         value: 'actions',
@@ -158,21 +179,31 @@ export default {
       },
     ],
     selected: [],
+    orderList: [],
     editedIndex: -1,
     editedItem: {
-      nameBuyer: '',
-      status: false,
+      client: '',
+      zipCode: '',
+      city: '',
       address: '',
       dateOrder: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
       dateDeliver: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+      status: false,
+      type: ''
     },
     defaultItem: {
-      nameBuyer: '',
-      status: false,
-      address: '',
+      client: 'Klient',
+      zipCode: '00-000',
+      city: 'Kroska',
+      address: '123 str',
       dateOrder: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
       dateDeliver: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+      status: false,
+      type: 'wysyłka'
     },
+    product: {
+      amount: 0
+    }
   }),
   
   computed: {
@@ -237,12 +268,12 @@ export default {
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
         this.editedIndex = -1;
+        this.selected = [];
       });
     },
-    
-    save() {
-      if (this.editedIndex > -1) {
-        axios.patch(
+
+    updateOrder() {
+      axios.patch(
           this.$root.API_ORDER + 'update/' + this.editedItem.id,
           this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
         ).then(() => {
@@ -268,9 +299,11 @@ export default {
                          duration: 3000,
                          speed: 2000,
                        });
-        });
-      } else {
-        axios.post(
+      });
+    },
+
+    storeOrder() {
+      axios.post(
           this.$root.API_ORDER + 'store', this.editedItem,
           {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
         ).then(() => {
@@ -296,7 +329,14 @@ export default {
                          duration: 3000,
                          speed: 2000,
                        });
-        });
+      });
+    },
+    
+    save() {
+      if (this.editedIndex > -1) {
+          this.updateOrder();
+      } else {
+        this.storeOrder();
       }
       this.close();
     }

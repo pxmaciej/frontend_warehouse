@@ -7,7 +7,7 @@ describe('Profile.vue', () => {
       mocks: {
         $store: {
           state: {
-            token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2F1dGgvbG9naW4iLCJpYXQiOjE3MDUyNTIyMDEsImV4cCI6MTcwNTI1NTgwMSwibmJmIjoxNzA1MjUyMjAxLCJqdGkiOiJ0WFdzM0lWREg0TkpmUXVwIiwic3ViIjoiOCIsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.8vvox5xJOVdCETKJ4ZJ8DPwN7uOWGtIJ6P00vAElv_Y',
+            token: '',
             role: 'user',
           },
         },

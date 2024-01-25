@@ -23,7 +23,7 @@
       
       <template v-slot:top>
         <v-toolbar flat color="white">
-          <v-toolbar-title>Lista Użytkowników:</v-toolbar-title>
+          <v-toolbar-title>Użytkownicy:</v-toolbar-title>
           <v-divider
             class="mx-4"
             inset

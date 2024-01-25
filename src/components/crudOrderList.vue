@@ -44,7 +44,7 @@ import axios from "axios";
 
 export default {
   name: 'crudOrderList',
-  props: ['orderList', 'products'],
+  props: ['orderList', 'products', 'order'],
   data: () => ({
     dialog: false,
     search: '',
@@ -59,7 +59,7 @@ export default {
       {text: 'Netto', value: 'netto'},
       {text: 'Vat', value: 'vat'},
       {text: 'Brutto', value: 'brutto'},
-      {text: 'Klient', value: 'nameBuyer'},
+      {text: 'Klient', value: 'client'},
       {text: 'Opcje', value: 'actions', sortable: false},
     ],
     product: {
@@ -97,15 +97,16 @@ export default {
                        speed: 2000,
                      });
       });
+      if(this.order['0'].type === "wysyłka") {
+        this.product.id = item.product_id;
+        this.product.amount = item.amount + this.products.find(product => product.id === this.product.id).amount;
       
-      this.product.id = item.product_id;
-      this.product.amount = item.amount + this.products.find(product => product.id === this.product.id).amount;
-      
-      axios.patch(
-        this.$root.API_PRODUCT + 'update/' + this.product.id,
-        this.product,
-        {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
-      )
+        axios.patch(
+          this.$root.API_PRODUCT + 'update/' + this.product.id,
+          this.product,
+          {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
+        )
+      }
     }
   }
 }

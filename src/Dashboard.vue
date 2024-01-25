@@ -2,19 +2,24 @@
   <div class="container">
      <notifications position="bottom right" reverse/>
     <div class="row">
-      <v-menu offset-y>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn rounded v-bind="attrs" variant="outlined" v-on="on">
-            Alarmy
-            <v-badge :content="alerts.length" color="red"></v-badge>
-          </v-btn>
-        </template>
-        <v-list>
-          <v-list-item v-for="(alert, index) in alerts" :key="index">
-            <v-list-item-title>{{ alert.name }}</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+      <div class="col-6">
+        <v-menu offset-y>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn rounded v-bind="attrs" variant="outlined" v-on="on">
+              Alarmy
+              <v-badge :content="alerts.length" color="red"></v-badge>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item v-for="(alert, index) in alerts" :key="index">
+              <v-list-item-title>{{ alert.name }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </div>
+    <div class="col-6">
+       <v-btn block size="x-large" @click="checkProductSetAlert">Sprawdź Alerty</v-btn>
+    </div>
     </div>
     <div class="row">
       <div class="col-12">
@@ -32,22 +37,23 @@
     </div>
     <div class="row">
       <div class="col-12">
-        <crudOrder :orders="orders" @submit="getOrder"></crudOrder>
+        <crudOrder :orders="orders" :products="products" @submit="getProductAndOrder"></crudOrder>
       </div>
     </div>
     <div v-if="role === 'admin'" class="row">
-      <div class="col-6">
+      <div class="col-md-6 col-sm-12">
         <crudAlert
           :alerts="alerts"
           :products="products"
           @submit="getAlert"
         ></crudAlert>
       </div>
-      <div class="col-6">
+      <div class="col-md-6 col-sm-12">
         <limitAlert
           :alerts="alerts"
           :products="products"
-          @submit="getAlert"
+          :limit="limit"
+          @submit="getLimit"
         ></limitAlert>
       </div>
     </div>
@@ -96,7 +102,12 @@ export default {
       alerts: [],
       statistics: [],
       role: "",
-      logs: []
+      logs: [],
+      limit: [],
+      alert:{
+        name: "",
+        product_id: 0
+      }
     }
   },
   
@@ -106,10 +117,25 @@ export default {
       this.getCategory();
       this.getOrder();
       this.getAlert();
+      this.getLimit();
+      setInterval(() => {
+        this.checkProductSetAlert();
+      }, 60 * 60 * 1000);
     }
   },
   
   methods: {
+    getLimit() {
+      axios.get(
+        this.$root.API_ALERT + 'limit',
+        {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
+      ).then(res => {
+        this.limit = res.data;
+      }).catch(error => {
+        console.log(error);
+      });
+    },
+
     getProduct() {
       axios.get(
         this.$root.API_PRODUCT + 'index',
@@ -167,6 +193,31 @@ export default {
       } else {
         this.getProduct();
       }
+    },
+
+    getProductAndOrder() {
+      this.getProduct();
+      this.getOrder();
+    },
+    async checkProductSetAlert() {
+      this.products.forEach((product) => {
+        const indexOfProductInAlerts = this.alerts.some(alert => alert.product_id === product.id);
+      
+        if (product.amount <= this.limit && !indexOfProductInAlerts) {
+          this.alert.name = product.name;
+          this.alert.product_id = product.id;
+          
+          axios.post(
+            this.$root.API_ALERT + 'store', this.alert,
+            {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
+          ).then(() => {
+            this.$emit('submit');
+          }).catch(error => {
+            console.log(error);
+          });
+        }
+      });
+      this.getAlert();
     }
   }
 }

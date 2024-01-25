@@ -1,10 +1,10 @@
 <template>
   <v-container>
     <v-row>
-      <div class="col-6">
+      <div class="col-md-6 col-sm-12">
         <formProfile @submit="getProfile"></formProfile>
       </div>
-      <div class="col-6">
+      <div class="col-md-6 col-sm-12">
         <profileData :profile="profile"></profileData>
       </div>
     </v-row>

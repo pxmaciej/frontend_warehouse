@@ -116,6 +116,7 @@ export default {
     product: {
       id: 0,
       amount: 0,
+      categories: [],
     },
     selected: [],
   }),
@@ -130,7 +131,47 @@ export default {
     close() {
       this.dialog = false;
     },
-    
+
+    storeOrderList() {
+           axios.post(
+              this.$root.API_ORDER_LIST + 'store',
+              this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
+            ).then(() => {
+              this.$emit('submit');
+              
+              this.$notify({
+                            title: 'Sukces',
+                            text: this.$root.NOTIFICATION_TEXT_SUCCESS
+                                      .replace('%s', 'dodać')
+                                      .replace('%s', 'produkt do zamówienia'),
+                            type: 'success',
+                            duration: 3000,
+                            speed: 2000,
+                          });
+            }).catch(error => {
+              console.log(error);
+              this.$notify({
+                            title: 'Błąd',
+                            text: this.$root.NOTIFICATION_TEXT_ERROR
+                                      .replace('%s', 'dodać')
+                                      .replace('%s', 'produktu do zamówienia'),
+                            type: 'error',
+                            duration: 3000,
+                            speed: 2000,
+                          });
+            });
+    },
+
+    updateProduct() {
+      this.product.amount = this.selected['0'].amount - this.editedItem.amount;
+      this.product.categories = this.selected['0'].categories;
+
+              axios.patch(
+                this.$root.API_PRODUCT + 'update/' + this.product.id,
+                this.product, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
+              );
+    },
+
     save() {
       this.product.id = this.selected['0'].id;
       this.editedItem.order_id = this.order['0'].id;
@@ -146,52 +187,29 @@ export default {
         const brutto = netto * (1 + vat / 100);
         this.editedItem.brutto = brutto.toFixed(2);
       }
-      
-      if (this.selected['0'].amount >= this.editedItem.amount) {
-        axios.post(
-          this.$root.API_ORDER_LIST + 'store',
-          this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
-        ).then(() => {
-          this.$emit('submit');
-          
-          this.$notify({
-                         title: 'Sukces',
-                         text: this.$root.NOTIFICATION_TEXT_SUCCESS
-                                   .replace('%s', 'dodać')
-                                   .replace('%s', 'produkt do zamówienia'),
-                         type: 'success',
-                         duration: 3000,
-                         speed: 2000,
-                       });
-        }).catch(error => {
-          console.log(error);
-          this.$notify({
-                         title: 'Błąd',
-                         text: this.$root.NOTIFICATION_TEXT_ERROR
-                                   .replace('%s', 'dodać')
-                                   .replace('%s', 'produktu do zamówienia'),
-                         type: 'error',
-                         duration: 3000,
-                         speed: 2000,
-                       });
-        });
-        
-        this.product.amount = this.selected['0'].amount - this.editedItem.amount;
-        axios.patch(
-          this.$root.API_PRODUCT + 'update/' + this.product.id,
-          this.product, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
-        );
-        
-        this.close();
-      } else {
-        this.$notify({
-                       title: 'Błąd',
-                       text: 'Ilość w zamówieniu jest większa niż ilość dostępnego produktu',
-                       type: 'error',
-                       duration: 3000,
-                       speed: 2000,
-                     });
+      switch(this.order['0'].type) {
+        case "wysyłka":
+          if (this.selected['0'].amount >= this.editedItem.amount && this.editedItem.amount !== 0) {
+            this.storeOrderList();
+            this.updateProduct();
+          } else {
+              this.$notify({
+                            title: 'Błąd',
+                            text: 'Ilość w zamówieniu jest większa niż ilość dostępnego produktu',
+                            type: 'error',
+                            duration: 3000,
+                            speed: 2000,
+                          });
+          }
+        break;
+
+        case "dostawa":
+            this.storeOrderList();
+        break;  
       }
+      this.selected = [];
+      this.editedItem.amount = 0;
+      this.close();
     }
   }
 }

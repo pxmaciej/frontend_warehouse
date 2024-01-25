@@ -18,14 +18,14 @@
     >
       <template v-slot:top>
         <v-toolbar flat color="white">
-          <v-toolbar-title>Lista Kategorii:</v-toolbar-title>
+          <v-toolbar-title>Kategorie:</v-toolbar-title>
           <v-divider
             class="mx-4"
             inset
             vertical
           ></v-divider>
           <v-spacer></v-spacer>
-          <v-dialog v-model="dialog" max-width="500px">
+          <v-dialog v-model="dialog" max-width="400px">
             <template v-slot:activator="{ on, attrs }">
               <v-btn
                 color="primary"
@@ -44,16 +44,16 @@
               <v-card-text>
                 <v-container>
                   <v-row>
-                    <v-col cols="12" sm="6" md="4">
-                      <v-text-field v-model="editedItem.name" label="Nazwa Kategorii"></v-text-field>
+                    <v-col cols="6" sm="6" md="6" >
+                      <v-text-field v-model="editedItem.name" label="Nazwa"></v-text-field>
                     </v-col>
-                    <v-col cols="12" sm="6" md="4">
+                    <v-col cols="6" sm="6" md="6">
                       <v-textarea v-model="editedItem.description" label="Opis"></v-textarea>
                     </v-col>
                   </v-row>
                 </v-container>
               </v-card-text>
-              
+
               <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="close">Anuluj</v-btn>

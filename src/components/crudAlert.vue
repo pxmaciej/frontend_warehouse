@@ -27,7 +27,7 @@
       
       <template v-slot:top>
         <v-toolbar flat color="white">
-          <v-toolbar-title>Lista alarmów:</v-toolbar-title>
+          <v-toolbar-title>Alarmy:</v-toolbar-title>
           <v-divider
             class="mx-4"
             inset

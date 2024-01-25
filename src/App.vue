@@ -2,9 +2,8 @@
   <v-app>
     
     <v-app-bar app clipped-left>
-      <div class="d-flex align-center">
-        <span class="ml-2"><h1>Magazyn</h1></span>
-      </div>
+      <v-app-bar-nav-icon @click="drawer = true"> </v-app-bar-nav-icon>
+        <v-toolbar-title>Magazyn</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn href="/contact" text>
         <span class="mr-2">Kontakt</span>
@@ -20,6 +19,7 @@
       v-if="isLoggedIn"
       app
       clipped
+      v-model="drawer"
       expand-on-hover>
       <v-list>
         <v-list-item class="px-2">
@@ -100,7 +100,8 @@ export default {
   data: function () {
     return {
       isLoggedIn: false,
-      user: []
+      user: [],
+      drawer: false
     }
   },
   

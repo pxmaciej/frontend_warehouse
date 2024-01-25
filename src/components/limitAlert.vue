@@ -1,10 +1,10 @@
 <template>
   <v-card>
-    <v-card-title>Alarm do stanu magazynowego: {{ limit }}</v-card-title>
+    <v-card-title>Ustaw Alarm: {{ value }}</v-card-title>
     <v-card-text>
       <v-form>
         <v-text-field
-          v-model="limit"
+          v-model="value"
           :counter="10"
           label="Ustaw limit"
           required
@@ -27,51 +27,23 @@ import axios from "axios";
 
 export default {
   name: "limitAlert",
-  props: ['products', 'alerts'],
+  props: ['products', 'alerts', 'limit'],
   
   data: () => ({
-    limit: 0,
-    alert: {
-      product_id: 0,
-      name: '',
-    },
+    value: 0
   }),
-  
-  watch: {
-    products: function () {
-      this.products.forEach((product) => {
-        if (product.amount <= this.limit) {
-          this.alert.name = product.name;
-          this.alert.product_id = product.id;
-          
-          axios.post(
-            this.$root.API_ALERT + 'store', this.alert,
-            {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
-          ).then(() => {
-            this.$emit('submit');
-          }).catch(error => {
-            console.log(error);
-          });
-        }
-      });
+
+ watch: {
+    limit(newLimit) {
+      // Reaguj na zmiany w limit i zaktualizuj value
+      this.value = newLimit;
     }
   },
-  
-  created() {
-    axios.get(
-      this.$root.API_ALERT + 'limit',
-      {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
-    ).then(res => {
-      this.limit = res.data;
-    }).catch(error => {
-      console.log(error);
-    });
-  },
-  
+
   methods: {
     setLimit() {
       axios.get(
-        this.$root.API_ALERT + 'limit/' + this.limit,
+        this.$root.API_ALERT + 'limit/' + this.value,
         {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
       ).then(() => {
         this.$notify({
@@ -84,11 +56,7 @@ export default {
       }).catch(error => {
         console.log(error);
       });
-    },
+    }
   }
 }
 </script>
-
-<style scoped>
-
-</style>

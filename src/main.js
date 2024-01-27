@@ -16,19 +16,18 @@ Vue.use(VueRouter);
 Vue.use(SmartTable);
 Vue.use(Notifications);
 
-Vue.prototype.API_PRODUCT = 'http://127.0.0.1:8000/api/product/';
-Vue.prototype.API_ORDER = 'http://127.0.0.1:8000/api/order/';
-Vue.prototype.API_ALERT = 'http://127.0.0.1:8000/api/alert/';
-Vue.prototype.API_CATEGORY = 'http://127.0.0.1:8000/api/category/';
-Vue.prototype.API_STATISTIC = 'http://127.0.0.1:8000/api/statistic/';
-Vue.prototype.API_LOG = 'http://127.0.0.1:8000/api/auth/log';
-Vue.prototype.API_AUTH = 'http://127.0.0.1:8000/api/auth/';
-Vue.prototype.API_ORDER_LIST = 'http://127.0.0.1:8000/api/orderlist/';
+Vue.prototype.API_PRODUCT = 'http://magazyn.000.pe/api/product/';
+Vue.prototype.API_ORDER = 'http://magazyn.000.pe/api/order/';
+Vue.prototype.API_ALERT = 'http://magazyn.000.pe/api/alert/';
+Vue.prototype.API_CATEGORY = 'http://magazyn.000.pe/api/category/';
+Vue.prototype.API_STATISTIC = 'http://magazyn.000.pe/api/statistic/';
+Vue.prototype.API_LOG = 'http://magazyn.000.pe/api/auth/log';
+Vue.prototype.API_AUTH = 'http://magazyn.000.pe/api/auth/';
+Vue.prototype.API_ORDER_LIST = 'http://magazyn.000.pe/api/orderlist/';
 
 Vue.prototype.NOTIFICATION_TEXT_SUCCESS = 'Udało się %s element %s';
 Vue.prototype.NOTIFICATION_TEXT_ERROR = 'Nie udało się %s elementu %s';
 Vue.prototype.NOTIFICATION_TEXT_CONFIRMATION = 'Jesteś pewny, że chcesz usunąć element';
-
 
 const router = new VueRouter({
                                  routes: routes,

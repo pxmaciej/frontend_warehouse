@@ -106,24 +106,24 @@ export default {
         } catch (error) {
           console.log({error})
           this.$notify({
-                         title: 'Error',
-                         text: 'Something wrong!',
+                         title: 'Błąd',
+                         text: 'Nie udało się wysłać maila!',
                          type: 'error',
                          duration: 3000,
                          speed: 1000,
                        });
         }  
         this.$notify({
-                       title: 'Success',
-                       text: 'Success send Message',
+                       title: 'Sukces',
+                       text: 'Udało się wysłać maila',
                        type: 'success',
                        duration: 3000,
                        speed: 1000,
                      });
       } else {
         this.$notify({
-                       title: 'Warning',
-                       text: 'All fields are required',
+                       title: 'Uwaga',
+                       text: 'Wszystkie pola są wymagane',
                        type: 'warn',
                        duration: 3000,
                        speed: 1000,

@@ -1,199 +1,344 @@
 <template>
-  <v-data-table
+  <v-card>
+    <v-card-title>
+      <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        label="Wyszukaj"
+        single-line
+        hide-details
+      ></v-text-field>
+    </v-card-title>
+    <v-data-table
       v-model="selected"
       :headers="headers"
       :items="orders"
+      :search="search"
       sort-by="dateDeliver"
       show-select
       class="elevation-1"
       :single-select=true
-  >
-    <template v-slot:top>
-      <v-toolbar flat color="white">
-        <v-toolbar-title>List Orders:</v-toolbar-title>
-        <v-divider
+    >
+      <template v-slot:top>
+        <v-toolbar flat color="white">
+          <v-toolbar-title>Zamówienia:</v-toolbar-title>
+          <v-divider
             class="mx-4"
             inset
             vertical
-        ></v-divider>
-        <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="800px">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
+          ></v-divider>
+          <v-spacer></v-spacer>
+          <v-dialog v-model="dialog" max-width="1000px">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
                 color="primary"
                 dark
                 class="mb-2"
                 v-bind="attrs"
                 v-on="on"
-            >New Item</v-btn>
-            <v-btn
-                color="success"
-                dark
+              >Dodaj
+              </v-btn>
+              <v-btn
+                color="primary"
+                outlined
                 class="mb-2 mr-2"
                 @click.stop.prevent="addProductsToOrder(selected)"
-            >Select Order Add Product</v-btn>
+              >Wybierz
+              </v-btn>
             
-          </template>
-          <v-card>
-            <v-card-title>
-              <span class="headline">{{ formTitle }}</span>
-            </v-card-title>
-            
-            <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.nameBuyer" label="Buyer name"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.address" label="Address"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
+            </template>
+            <v-card>
+              <v-card-title>
+                <span class="headline">{{ formTitle }}</span>
+              </v-card-title>
+              
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col cols="12" sm="6" md="4">
+                      <v-text-field
+                        v-model="editedItem.client"
+                        label="Klient"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                      <v-text-field
+                        v-model="editedItem.zipCode"
+                        label="Kod pocztowy"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                      <v-text-field
+                        v-model="editedItem.city"
+                        label="Miasto"
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                      <v-textarea
+                        v-model="editedItem.address"
+                        label="Adres"
+                      ></v-textarea>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                      <v-select
+                        label="Typ"
+                        v-model="editedItem.type"
+                        :items="['dostawa', 'wysyłka']"
+                      ></v-select>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
                       <v-checkbox
-                              v-model="editedItem.status"
-                              :label="'status Deliver'"
+                        v-model="editedItem.status"
+                        label="Status"
                       ></v-checkbox>
-                  </v-col>
-                </v-row>
-                <v-row justify="space-between">
-                    <div class="subheading">
-                    Date Order
-                    </div>
-                    <v-date-picker v-model="editedItem.dateOrder" color="green lighten-1"></v-date-picker>
-                    <div class="subheading">
-                      Date Deliver
-                    </div>
-                    <v-date-picker v-model="editedItem.dateDeliver" color="green lighten-1"></v-date-picker>
-                </v-row>
-              </v-container>
-            </v-card-text>
-            
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
-    </template>
-    <template v-slot:item.actions="{ item }">
-      <v-icon
+                    </v-col>
+                  </v-row>
+                  <v-row justify="space-around">
+                    <v-col cols="12" sm="6" md="4">
+                      <h3>Data Zamówienia</h3>
+                      <v-date-picker
+                        v-model="editedItem.dateOrder"
+                        color="green lighten-1"
+                        locale="pl"
+                      ></v-date-picker>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="4">
+                      <h3>Data Dostawy</h3>
+                      <v-date-picker
+                        v-model="editedItem.dateDeliver"
+                        color="green lighten-1"
+                        locale="pl"
+                      ></v-date-picker>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+              
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="close">Anuluj</v-btn>
+                <v-btn color="blue darken-1" text @click="save">Zapisz</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-toolbar>
+      </template>
+      <template v-slot:item.actions="{ item }">
+        <v-icon
           small
           class="mr-2"
           @click="editItem(item)"
-      >
-        mdi-pencil
-      </v-icon>
-      <v-icon
+        >
+          mdi-pencil
+        </v-icon>
+        <v-icon
           small
           @click="deleteItem(item)"
-      >
-        mdi-delete
-      </v-icon>
-    </template>
-  </v-data-table>
+        >
+          mdi-delete
+        </v-icon>
+      </template>
+    </v-data-table>
+  </v-card>
 </template>
 
 <script>
-
 import axios from "axios";
-
-const API_ORDER = 'http://127.0.0.1:8000/api/orders/';
 
 export default {
   name: 'crudOrder',
-  props: ['orders'],
+  props: ['orders', 'products'],
   data: () => ({
     dialog: false,
+    search: '',
     headers: [
       {
-        text: 'Buyer Name',
+        text: 'Klient',
         align: 'start',
-        sortable: false,
-        value: 'nameBuyer',
+        value: 'client',
       },
-      { text: 'Order Date', value: 'dateOrder',  dataType: "Date" },
-      { text: 'Deliver Date', value: 'dateDeliver',  dataType: "Date" },
-      { text: 'Address', value: 'address'},
-      { text: 'Status', value: 'status'},
-      { text: 'Actions', value: 'actions', sortable: false },
+      {
+        text: 'Data zamówienia',
+        value: 'dateOrder',
+        dataType: "Date"
+      },
+      {
+        text: 'Data dostawy',
+        value: 'dateDeliver',
+        dataType: "Date"
+      },
+      {text: 'Kod pocztowy', value: 'zipCode'},
+      {text: 'Miasto', value: 'city'},
+      {text: 'Adres', value: 'address'},
+      {text: 'Status', value: 'status'},
+      {text: 'Type', value: 'type'},
+      {
+        text: 'Opcje',
+        value: 'actions',
+        sortable: false
+      },
     ],
     selected: [],
+    orderList: [],
     editedIndex: -1,
     editedItem: {
-      nameBuyer: '',
-      status: false,
+      client: '',
+      zipCode: '',
+      city: '',
       address: '',
       dateOrder: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
       dateDeliver: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+      status: false,
+      type: ''
     },
     defaultItem: {
-      nameBuyer: '',
-      status: false,
-      address: '',
-      ateOrder: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+      client: 'Klient',
+      zipCode: '00-000',
+      city: 'Kroska',
+      address: '123 str',
+      dateOrder: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
       dateDeliver: (new Date(Date.now() - (new Date()).getTimezoneOffset() * 60000)).toISOString().substr(0, 10),
+      status: false,
+      type: 'wysyłka'
     },
+    product: {
+      amount: 0
+    }
   }),
   
   computed: {
-    formTitle () {
-      return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+    formTitle() {
+      return this.editedIndex === -1 ? 'Nowe zamówienie' : 'Edytuj zamówienie';
     },
   },
   
   watch: {
-    dialog (val) {
-      val || this.close()
+    dialog(val) {
+      val || this.close();
     },
   },
   methods: {
     addProductsToOrder(selected) {
       if (selected.length !== 0) {
-        this.$router.push({name: 'orderList', params: { order: selected }})
+        this.$router.push({name: 'orderList', params: {order: selected}});
       }
     },
     
     editItem(item) {
-      this.editedIndex = this.orders.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      this.dialog = true
+      this.editedIndex = this.orders.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      this.dialog = true;
     },
     
     deleteItem(item) {
-      const index = this.orders.indexOf(item)
-      confirm('Are you sure you want to delete this item?') && this.orders.splice(index, 1)
-      axios.delete(API_ORDER+'destroy/'+item.id,{headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-      .then(res => {
-        console.log(res);
-        this.$emit('submit')
-      })
+      const index = this.orders.indexOf(item);
+      confirm(this.$root.NOTIFICATION_TEXT_CONFIRMATION) && this.orders.splice(index, 1);
+      
+      axios.delete(
+        this.$root.API_ORDER + 'destroy/' + item.id,
+        {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
+      ).then(() => {
+        this.$emit('submit');
+        
+        this.$notify({
+                       title: 'Sukces',
+                       text: this.$root.NOTIFICATION_TEXT_SUCCESS
+                                 .replace('%s', 'usunąć')
+                                 .replace('%s', 'zamówienia'),
+                       type: 'success',
+                       duration: 3000,
+                       speed: 2000,
+                     });
+      }).catch(error => {
+        console.log(error);
+        this.$notify({
+                       title: 'Błąd',
+                       text: this.$root.NOTIFICATION_TEXT_ERROR
+                                 .replace('%s', 'usunąć')
+                                 .replace('%s', 'zamówienia'),
+                       type: 'error',
+                       duration: 3000,
+                       speed: 2000,
+                     });
+      });
     },
     
-    close () {
-      this.dialog = false
+    close() {
+      this.dialog = false;
       this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      })
+        this.editedItem = Object.assign({}, this.defaultItem);
+        this.editedIndex = -1;
+        this.selected = [];
+      });
+    },
+
+    updateOrder() {
+      axios.patch(
+          this.$root.API_ORDER + 'update/' + this.editedItem.id,
+          this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
+        ).then(() => {
+          this.$emit('submit');
+          
+          this.$notify({
+                         title: 'Sukces',
+                         text: this.$root.NOTIFICATION_TEXT_SUCCESS
+                                   .replace('%s', 'edytować')
+                                   .replace('%s', 'zamówienia'),
+                         type: 'success',
+                         duration: 3000,
+                         speed: 2000,
+                       });
+        }).catch(error => {
+          console.log(error);
+          this.$notify({
+                         title: 'Błąd',
+                         text: this.$root.NOTIFICATION_TEXT_ERROR
+                                   .replace('%s', 'edytować')
+                                   .replace('%s', 'zamówienia'),
+                         type: 'error',
+                         duration: 3000,
+                         speed: 2000,
+                       });
+      });
+    },
+
+    storeOrder() {
+      axios.post(
+          this.$root.API_ORDER + 'store', this.editedItem,
+          {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
+        ).then(() => {
+          this.$emit('submit');
+          
+          this.$notify({
+                         title: 'Sukces',
+                         text: this.$root.NOTIFICATION_TEXT_SUCCESS
+                                   .replace('%s', 'utworzyć')
+                                   .replace('%s', 'zamówienia'),
+                         type: 'success',
+                         duration: 3000,
+                         speed: 2000,
+                       });
+        }).catch(error => {
+          console.log(error);
+          this.$notify({
+                         title: 'Błąd',
+                         text: this.$root.NOTIFICATION_TEXT_ERROR
+                                   .replace('%s', 'utworzyć')
+                                   .replace('%s', 'zamówienia'),
+                         type: 'error',
+                         duration: 3000,
+                         speed: 2000,
+                       });
+      });
     },
     
-    save () {
+    save() {
       if (this.editedIndex > -1) {
-        axios.patch(API_ORDER+'update/'+this.editedItem.id, this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-             .then(res => {
-               console.log(res);
-               this.$emit('submit')
-             })
+          this.updateOrder();
       } else {
-        axios.post(API_ORDER+'store', this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-             .then(res => {
-               console.log(res);
-               this.$emit('submit')
-             })
+        this.storeOrder();
       }
-      this.close()
+      this.close();
     }
   }
 }

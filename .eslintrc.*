@@ -1,0 +1,22 @@
+module.exports = {
+    root: true,
+    env: {
+      node: true,
+    },
+    extends: [
+      'eslint:recommended',
+      '@vue/prettier',
+      'plugin:vue/recommended',
+      '@vue/typescript/recommended',
+    ],
+    parserOptions: {
+      parser: '@typescript-eslint/parser',
+    },
+    plugins: [
+      'metrika',
+    ],
+    rules: {
+      'metrika/lines': 'warn',
+    },
+  };
+  

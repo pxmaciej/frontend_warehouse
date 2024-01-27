@@ -1,34 +1,44 @@
 import Dashboard from './Dashboard'
-import HelloWorld from './components/HelloWorld'
 import Login from './Login'
 import OrderList from "./OrderList";
-import Product from "./Product";
+import Statistic from "./Statistic";
+import ContactForm from "./ContactForm";
+import Profile from "./Profile";
 
 
 export const routes = [
 
     {
-        path : '/',
-        component: HelloWorld,
-    },
-    {
-        path : '/login',
-        component: Login,
-    },
-    {
-        path : '/dashboard',
+        path: '/',
         component: Dashboard,
     },
     {
-        path : '/orderList/:order',
+        path: '/login',
+        component: Login,
+    },
+    {
+        path: '/dashboard',
+        component: Dashboard,
+    },
+    {
+        path: '/profile',
+        component: Profile,
+    },
+    {
+        path: '/orderList/:order',
         name: 'orderList',
         component: OrderList,
         props: true
     },
     {
-        path : '/product/show/:product',
-        name: 'product/show',
-        component: Product,
+        path: '/statistic',
+        name: 'statistic',
+        component: Statistic,
         props: true
+    },
+    {
+        path: '/contact',
+        component: ContactForm,
     }
+
 ];

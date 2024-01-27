@@ -1,173 +1,271 @@
 <template>
-  <v-data-table
+  <v-card>
+    <v-card-title>
+      <v-text-field
+        v-model="search"
+        append-icon="mdi-magnify"
+        label="Wyszukaj"
+        single-line
+        hide-details
+      ></v-text-field>
+    </v-card-title>
+    <v-data-table
       :headers="headers"
       :items="alerts"
+      :search="search"
       sort-by="name"
       class="elevation-1"
-  >
-    <template v-slot:top>
-      <v-toolbar flat color="white">
-        <v-toolbar-title>List alerts:</v-toolbar-title>
-        <v-divider
+    >
+      <template
+        v-for="header in headers.filter((header) =>
+                header.hasOwnProperty('formatter')
+              )"
+        v-slot:[`item.${header.value}`]="{ header, value }"
+      >
+        {{ header.formatter(value) }}
+      </template>
+      
+      <template v-slot:top>
+        <v-toolbar flat color="white">
+          <v-toolbar-title>Alarmy:</v-toolbar-title>
+          <v-divider
             class="mx-4"
             inset
             vertical
-        ></v-divider>
-        <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="800px">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
+          ></v-divider>
+          <v-spacer></v-spacer>
+          <v-dialog v-model="dialog" max-width="800px">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
                 color="primary"
                 dark
                 class="mb-2"
                 v-bind="attrs"
                 v-on="on"
-            >New Item</v-btn>
-          </template>
-          <v-card>
-            <v-card-title>
-              <span class="headline">{{ formTitle }}</span>
-            </v-card-title>
-            
-            <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col cols="12" sm="12" md="12">
-                    <v-text-field v-model="editedItem.name" label="Alert name"></v-text-field>
-                    <v-select
+              >Dodaj
+              </v-btn>
+            </template>
+            <v-card>
+              <v-card-title>
+                <span class="headline">{{ formTitle }}</span>
+              </v-card-title>
+              
+              <v-card-text>
+                <v-container>
+                  <v-row>
+                    <v-col cols="12" sm="12" md="12">
+                      <v-text-field v-model="editedItem.name" label="Nazwa Alarmu"></v-text-field>
+                      <v-select
                         v-model="editedItem.product_id"
                         :hint="`${products.name}`"
-                        :items="products"
+                        :items="filteredProducts"
                         item-text="name"
                         item-value="id"
-                        label="Select Porduct"
-                        persistent-hint
+                        label="Wybierz produkt"
                         single-line
-                    ></v-select>
-                    <v-text-field v-model="editedItem.product_id" label="Product"></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
-            
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
-    </template>
-    <template v-slot:item.actions="{ item }">
-      <v-icon
+                      >
+                        <template v-slot:prepend-item>
+                          <v-list-item>
+                            <v-list-item-content>
+                              <v-text-field v-model="selectedProduct" placeholder="Wyszukaj" @input="searchProduct"></v-text-field>
+                            </v-list-item-content>
+                          </v-list-item>
+                          <v-divider class="mt-2"></v-divider>
+                        </template>
+                      </v-select>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+              
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="close">Anuluj</v-btn>
+                <v-btn color="blue darken-1" text @click="save">Zapisz</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-toolbar>
+      </template>
+      <template v-slot:item.actions="{ item }">
+        <v-icon
           small
           class="mr-2"
           @click="editItem(item)"
-      >
-        mdi-pencil
-      </v-icon>
-      <v-icon
+        >
+          mdi-pencil
+        </v-icon>
+        <v-icon
           small
           @click="deleteItem(item)"
-      >
-        mdi-delete
-      </v-icon>
-    </template>
-  </v-data-table>
+        >
+          mdi-delete
+        </v-icon>
+      </template>
+    </v-data-table>
+  </v-card>
 </template>
 
 <script>
-
 import axios from "axios";
-
-const API_ALERT = 'http://127.0.0.1:8000/api/alerts/';
 
 export default {
   name: 'crudAlert',
   props: ['alerts', 'products'],
   data: () => ({
     dialog: false,
+    search: '',
     headers: [
       {
-        text: 'Alert name',
+        text: 'Nazwa alarmu',
         align: 'start',
         sortable: false,
         value: 'name',
       },
-      { text: 'Product Name', value: 'productName', sortable: false },
-      { text: 'Actions', value: 'actions', sortable: false },
+      {text: 'Produkt', value: 'product_name'},
+      {
+        text: 'Opcje',
+        value: 'actions',
+        sortable: false
+      },
     ],
     editedIndex: -1,
     editedItem: {
-      nameBuyer: '',
       product_id: 0,
-      productName: '',
+      name: '',
     },
     defaultItem: {
-      nameBuyer: '',
       product_id: 0,
-      productName: '',
+      name: '',
     },
+    selectedProduct: ''
   }),
   
   computed: {
-    formTitle () {
-      return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+    formTitle() {
+      return this.editedIndex === -1 ? 'Nowy alarm' : 'Edytuj alarm';
     },
-  },
-  
-  mounted: async function () {
-  
+    filteredProducts() {
+      return this.products.filter((product) => product.name.toLowerCase().includes(this.selectedProduct.toLowerCase())
+      );
+    },
   },
   
   watch: {
-    dialog (val) {
-      val || this.close()
+    dialog(val) {
+      val || this.close();
     },
   },
   methods: {
-    editItem (item) {
-      this.editedIndex = this.alerts.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      this.dialog = true
+    editItem(item) {
+      this.editedIndex = this.alerts.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      this.dialog = true;
     },
     
-    deleteItem (item) {
-      const index = this.alerts.indexOf(item)
-      confirm('Are you sure you want to delete this item?') && this.alerts.splice(index, 1)
-      axios.delete(API_ALERT+'destroy/'+item.id,{headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-           .then(res => {
-             console.log(res);
-             this.$emit('submit')
-           })
+    deleteItem(item) {
+      const index = this.alerts.indexOf(item);
+      confirm(this.$root.NOTIFICATION_TEXT_CONFIRMATION) && this.alerts.splice(index, 1);
+      
+      axios.delete(
+        this.$root.API_ALERT + 'destroy/' + item.id,
+        {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
+      ).then(() => {
+        this.$emit('submit');
+        
+        this.$notify({
+                       title: 'Sukces',
+                       text: this.$root.NOTIFICATION_TEXT_SUCCESS.replace('%s', 'usunąć').replace('%s', 'alarm'),
+                       type: 'success',
+                       duration: 3000,
+                       speed: 2000,
+                     });
+      }).catch(error => {
+        console.log(error);
+        this.$notify({
+                       title: 'Błąd',
+                       text: this.$root.NOTIFICATION_TEXT_ERROR.replace('%s', 'usunąć').replace('%s', 'alarmu'),
+                       type: 'error',
+                       duration: 3000,
+                       speed: 2000,
+                     });
+      });
     },
     
-    close () {
-      this.dialog = false
+    close() {
+      this.dialog = false;
       this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      })
+        this.editedItem = Object.assign({}, this.defaultItem);
+        this.editedIndex = -1;
+      });
     },
     
-    save () {
+    save() {
       if (this.editedIndex > -1) {
-        axios.patch(API_ALERT+'update/'+ this.editedItem.id, this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-             .then(res => {
-               console.log(res);
-               this.$emit('submit')
-             })
+        axios.patch(
+          this.$root.API_ALERT + 'update/' + this.editedItem.id,
+          this.editedItem,
+          {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
+        ).then(() => {
+          this.$emit('submit');
+          
+          this.$notify({
+                         title: 'Sukces',
+                         text: this.$root.NOTIFICATION_TEXT_SUCCESS
+                                   .replace('%s', 'edytować')
+                                   .replace('%s', 'alarm'),
+                         type: 'success',
+                         duration: 3000,
+                         speed: 2000,
+                       });
+        }).catch(error => {
+          console.log(error);
+          this.$notify({
+                         title: 'Błąd',
+                         text: this.$root.NOTIFICATION_TEXT_ERROR
+                                   .replace('%s', 'edytować')
+                                   .replace('%s', 'alarmu'),
+                         type: 'error',
+                         duration: 3000,
+                         speed: 2000,
+                       });
+        });
       } else {
-        axios.post(API_ALERT+'store', this.editedItem, {headers: {"Authorization": 'Bearer ' + this.$store.state.token}})
-             .then(res => {
-               console.log(res);
-               this.$emit('submit')
-             })
+        axios.post(
+          this.$root.API_ALERT + 'store', this.editedItem,
+          {headers: {"Authorization": 'Bearer ' + this.$store.state.token}}
+        ).then(() => {
+          this.$emit('submit');
+          
+          this.$notify({
+                         title: 'Sukces',
+                         text: this.$root.NOTIFICATION_TEXT_SUCCESS
+                                   .replace('%s', 'utworzyć')
+                                   .replace('%s', 'alarm'),
+                         type: 'success',
+                         duration: 3000,
+                         speed: 2000,
+                       });
+        }).catch(error => {
+          console.log(error);
+          this.$notify({
+                         title: 'Błąd',
+                         text: this.$root.NOTIFICATION_TEXT_ERROR
+                                   .replace('%s', 'utworzyć')
+                                   .replace('%s', 'alarmu'),
+                         type: 'error',
+                         duration: 3000,
+                         speed: 2000,
+                       });
+        });
       }
-      this.close()
+      this.close();
+    },
+  
+    searchProduct() {
+      this.filteredProducts = this.products.filter((product) => product.name.toLowerCase().includes(this.selectedProduct.toLowerCase())
+      );
     }
   }
 }
 </script>
-

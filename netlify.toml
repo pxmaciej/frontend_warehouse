@@ -1,6 +1,6 @@
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
+  from = "*"
+  to = "https://magazyn.000.pe"
   status = 200
 [[headers]]
   for = "*"

@@ -89,6 +89,7 @@ export default {
         this.user,{
           headers: {
             "Access-Control-Allow-Origin": "*",
+            'Access-Control-Allow-Methods':'GET,PUT,POST,DELETE,PATCH,OPTIONS',
           }
         }
       ).then(res => {

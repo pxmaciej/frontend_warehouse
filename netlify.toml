@@ -1,5 +1,9 @@
+[build]
+  command = "npm build"
+  functions = "lambda"
+  publish = "dist"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-

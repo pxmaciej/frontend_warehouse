@@ -8,6 +8,7 @@ import {store} from './store'
 import SmartTable from 'vuejs-smart-table'
 import Notifications from 'vue-notification'
 import DatetimePicker from 'vuetify-datetime-picker'
+import axiosConfig from './utils/axios-config'; 
 
 Vue.use(DatetimePicker) 
 Vue.use(VeeValidate);

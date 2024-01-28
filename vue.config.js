@@ -3,6 +3,12 @@ module.exports = {
     'vuetify'
   ],
   devServer: {
-    proxy: 'https://magazyn.000.pe'
+    proxy: {
+      '/api': {
+        target: 'https://magazyn.000.pe', // adres URL serwera API
+        changeOrigin: true,
+        pathRewrite: { '^/api': '' }
+      }
+    }
   }
 }

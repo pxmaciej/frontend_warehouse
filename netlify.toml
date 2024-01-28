@@ -1,8 +1,5 @@
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
+  force = true
+  from = "/api/*"
   status = 200
-[[headers]]
-  for = "/api"
-  [headers.values]
-    Access-Control-Allow-Origin = "https://magazyn.000.pe"
+  to = "https://magazyn.000.pe"

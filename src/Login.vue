@@ -86,12 +86,7 @@ export default {
     submit() {
       axios.post(
         this.$root.API_AUTH + 'login',
-        this.user,{
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            'Access-Control-Allow-Methods':'GET,PUT,POST,DELETE,PATCH,OPTIONS',
-          }
-        }
+        this.user
       ).then(res => {
         this.$store.commit('setToken', res.data.access_token);
         this.$store.commit('setUserRole', res.data.user.role);

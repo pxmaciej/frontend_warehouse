@@ -2,7 +2,6 @@
   from = "/*"
   to = "/index.html"
   status = 200
- headers = {X-From = "Netlify"}
 [[headers]]
   for = "/*"
   [headers.values]

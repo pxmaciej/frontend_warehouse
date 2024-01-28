@@ -16,14 +16,14 @@ Vue.use(VueRouter);
 Vue.use(SmartTable);
 Vue.use(Notifications);
 
-Vue.prototype.API_PRODUCT = 'http://magazyn.000.pe/api/product/';
-Vue.prototype.API_ORDER = 'http://magazyn.000.pe/api/order/';
-Vue.prototype.API_ALERT = 'http://magazyn.000.pe/api/alert/';
-Vue.prototype.API_CATEGORY = 'http://magazyn.000.pe/api/category/';
-Vue.prototype.API_STATISTIC = 'http://magazyn.000.pe/api/statistic/';
-Vue.prototype.API_LOG = 'http://magazyn.000.pe/api/auth/log';
-Vue.prototype.API_AUTH = 'http://magazyn.000.pe/api/auth/';
-Vue.prototype.API_ORDER_LIST = 'http://magazyn.000.pe/api/orderlist/';
+Vue.prototype.API_PRODUCT = 'https://magazyn.000.pe/api/product/';
+Vue.prototype.API_ORDER = 'https://magazyn.000.pe/api/order/';
+Vue.prototype.API_ALERT = 'https://magazyn.000.pe/api/alert/';
+Vue.prototype.API_CATEGORY = 'https://magazyn.000.pe/api/category/';
+Vue.prototype.API_STATISTIC = 'https://magazyn.000.pe/api/statistic/';
+Vue.prototype.API_LOG = 'https://magazyn.000.pe/api/auth/log';
+Vue.prototype.API_AUTH = 'https://magazyn.000.pe/api/auth/';
+Vue.prototype.API_ORDER_LIST = 'https://magazyn.000.pe/api/orderlist/';
 
 Vue.prototype.NOTIFICATION_TEXT_SUCCESS = 'Udało się %s element %s';
 Vue.prototype.NOTIFICATION_TEXT_ERROR = 'Nie udało się %s elementu %s';

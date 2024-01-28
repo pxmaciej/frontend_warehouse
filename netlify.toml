@@ -1,8 +1,8 @@
 [[redirects]]
-  from = "*"
+  from = "/https://magazyn.000.pe"
   to = "https://magazyn.000.pe"
   status = 200
 [[headers]]
-  for = "*"
+  for = "/*"
   [headers.values]
     Access-Control-Allow-Origin = "*"

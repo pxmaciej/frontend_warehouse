@@ -5,7 +5,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/api': {
-        target: 'https://magazyn.000.pe',
+        target: 'https://magazyn.000.pe/', // Adres URL serwera Laravel
         changeOrigin: true,
         pathRewrite: { '^/api': '' }
       }
